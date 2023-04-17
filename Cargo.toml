@@ -1,0 +1,18 @@
+[package]
+name = "walle_mqtt_protocol"
+version = "0.1.0"
+edition = "2021"
+description = "一个mqtt报文解析库"
+license = "Apache-2.0"
+keywords = ["MQTT"]
+authors = ["Walle_Lee"]
+
+[dependencies]
+thiserror = "1"
+anyhow = "1" # 错误处理
+bytes = "1.1.0"
+serde = { version = "1", features = ["derive"] } # 序列化/反序列化
+tracing = "0.1" # 日志处理
+tracing-appender = "0.2" # 文件日志
+tracing-opentelemetry = "0.18.0" # opentelemetry 支持
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] } # 日志
