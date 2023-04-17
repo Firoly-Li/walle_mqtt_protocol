@@ -131,7 +131,7 @@ mod tests {
         topices.push(topic2);
         // Subscribe::new(topices, 1892).unwrap()
         MqttMessageBuilder::subscribe()
-            .topic(topices)
+            .topics(topices)
             .message_id(1892)
             .build()
             .unwrap()

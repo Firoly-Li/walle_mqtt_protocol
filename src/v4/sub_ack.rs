@@ -24,10 +24,11 @@ pub struct SubAck {
 
 impl SubAck {
     pub fn new(
-        fixed_header: FixedHeader,
+        mut fixed_header: FixedHeader,
         variable_header: GeneralVariableHeader,
         acks: Vec<u8>,
     ) -> Self {
+        fixed_header.set_remaining_length(acks.len());
         Self {
             fixed_header,
             variable_header,
@@ -109,7 +110,6 @@ mod tests {
     #[test]
     fn test() {
         let resp = MqttMessageBuilder::sub_ack()
-            .qos(QoS::AtLeastOnce)
             .message_id(12)
             .acks(vec![0, 1, 2, 1, 1, 0])
             .build()

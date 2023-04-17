@@ -574,7 +574,7 @@ impl UnsubAckBuilder {
         self.message_id = message_id;
         self
     }
-    
+
     pub fn build(mut self) -> Result<UnSubAck,ProtoError> {
         let resp = FixedHeaderBuilder::new().un_suback().build();
         match resp {
