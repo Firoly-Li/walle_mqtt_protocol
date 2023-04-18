@@ -168,13 +168,13 @@ impl Decoder for Connect {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConnectVariableHeader {
     // 协议名称
-    protocol_name: String,
+    pub protocol_name: String,
     // 协议级别
-    protocol_level: MqttVersion,
+    pub protocol_level: MqttVersion,
     // 连接标志
-    connect_flags: ConnectFlags,
+    pub connect_flags: ConnectFlags,
     // 心跳
-    keep_alive: u16,
+    pub keep_alive: u16,
 }
 
 impl ConnectVariableHeader {
@@ -245,12 +245,12 @@ impl VariableDecoder for ConnectVariableHeader {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConnectFlags {
-    username_flag: bool,
-    password_flag: bool,
-    will_retain: bool,
-    will_qos: QoS,
-    will_flag: bool,
-    clean_session: bool,
+    pub username_flag: bool,
+    pub password_flag: bool,
+    pub will_retain: bool,
+    pub will_qos: QoS,
+    pub will_flag: bool,
+    pub clean_session: bool,
 }
 
 impl ConnectFlags {
@@ -315,9 +315,9 @@ impl ConnectFlags {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Login {
     // 账号信息
-    username: String,
+    pub username: String,
     // 密码信息
-    password: String,
+    pub password: String,
 }
 
 impl Login {
@@ -377,13 +377,13 @@ impl Login {
 #[derive(Debug, Clone, PartialEq)]
 pub struct LastWill {
     // 主题
-    topic_name: String,
+    pub topic_name: String,
     // 遗嘱消息的内容
-    message: Bytes,
+    pub message: Bytes,
     // 遗嘱消息的质量
-    qos: QoS,
+    pub qos: QoS,
     // 遗嘱保留
-    retain: bool,
+    pub retain: bool,
 }
 
 impl LastWill {
@@ -511,6 +511,8 @@ mod tests {
                     " encode_and_decode_for_connect_should_be_work bytes1  = {:?}",
                     bytes1
                 );
+                let connect2 = Connect::decode(bytes1.into()).unwrap();
+                println!("connect2 = {:?}", connect2);
             }
             Err(err) => println!("编解码出错"),
         }

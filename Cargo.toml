@@ -6,6 +6,7 @@ description = "一个mqtt报文解析库"
 license = "Apache-2.0"
 keywords = ["MQTT"]
 authors = ["Walle_Lee"]
+repository = "https://github.com/Firoly-Li/walle_mqtt_protocol"
 
 [dependencies]
 thiserror = "1"
