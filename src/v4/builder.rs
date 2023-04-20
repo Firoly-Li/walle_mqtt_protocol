@@ -139,7 +139,7 @@ impl ConnectBuilder {
         let will_retain = false;
         let will_qos = QoS::AtMostOnce;
         let clean_session = false;
-        let will_topic = self.will_topic.clone().unwrap();
+        let will_topic = self.will_topic.clone();
         if self.will_topic.is_some() && self.will_message.is_some() {
             will_flag = true;
         }
@@ -159,16 +159,32 @@ impl ConnectBuilder {
             conn_flags,
             self.keep_alive,
         );
+        let mut login = None;
         // 构建 Login
-        let login = Login::new(self.username.unwrap(), self.password.unwrap());
+        if self.username.is_some() && self.password.is_some() {
+           login = Some(Login::new(self.username.unwrap(), self.password.unwrap()));
+        }
+        // 计算login_len
+        let login_len = match &login {
+            Some(login) => login.len(),
+            None => 0
+        };
         // 构建LastWill
-        let last_will = LastWill::new(
-            will_topic,
+        let last_will: Option<LastWill> = match will_topic {
+            Some(topic) =>{
+                Some(LastWill::new(
+            topic,
             self.will_message.unwrap(),
             self.will_qos,
-            self.retain,
-        );
-        // 计算remaining_length
+            self.retain,))
+            },
+            None => None
+        };
+        // 计算last_will_len
+        let last_will_len = match &last_will {
+            Some(t) => t.len(),
+            None => 0
+        };
         let remaining_length = {
             let mut len = 2 + PROTOCOL_NAME.len() // protocol name
                 + 1  // protocol version
@@ -176,9 +192,9 @@ impl ConnectBuilder {
                 + 2; // keep alive
             len += 2 + client_id.len();
             // last will len
-            len += &last_will.len();
+            len += last_will_len;
             // username and password len
-            len += &login.len();
+            len += login_len;
             len
         };
         let fixed_header = FixedHeaderBuilder::new()
@@ -193,8 +209,8 @@ impl ConnectBuilder {
                 fixed_header,
                 variable_header,
                 client_id,
-                last_will: Some(last_will),
-                login: Some(login),
+                last_will,
+                login,
             }),
             Err(e) => Err(e),
         }

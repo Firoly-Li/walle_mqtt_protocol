@@ -91,9 +91,7 @@ impl Decoder for Subscribe {
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
                 if let Ok(variable_header) = GeneralVariableHeader::decode(&mut bytes) {
-                    println!("bytes: {:?}", bytes);
                     let topices = Topic::read_topics(&mut bytes);
-                    println!("topices: {:?}", topices);
                     match topices {
                         Ok(topices) => {
                             return Ok(Subscribe {
@@ -105,7 +103,7 @@ impl Decoder for Subscribe {
                         Err(err) => return Err(err),
                     }
                 }
-                Err(ProtoError::NotKnow)
+                Err(ProtoError::DecodeGeneralVariableHeaderError)
             }
             Err(err) => Err(err),
         }

@@ -43,7 +43,7 @@ impl Encoder for PubRec {
                     buffer.put_u16(self.variable_header.message_id() as u16);
                     return Ok(4);
                 }
-                Err(ProtoError::NotKnow)
+                Err(ProtoError::EncodeVariableheaderError)
             }
             Err(err) => Err(err),
         }

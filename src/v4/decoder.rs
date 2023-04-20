@@ -9,7 +9,7 @@ pub fn read_fixed_header(stream: &mut Bytes) -> Result<FixedHeader, ProtoError> 
     let stream_len = stream.len();
     // println!("stream_len: {}", stream_len);
     if stream_len < 2 && stream_len > 5 {
-        return Err(ProtoError::NotKnow);
+        return Err(ProtoError::FixedHeaderLengthError(stream_len));
     }
     let mut iter = stream.iter();
     // 拿到首字节byte1
@@ -102,7 +102,7 @@ pub fn check_fixed_header_options(
             match low_4 >> 3 {
                 0 => dup = Some(false),
                 1 => dup = Some(true),
-                _ => return Err(ProtoError::NotKnow),
+                x => return Err(ProtoError::DupValueError(x)),
             }
 
             //处理b2和b1位数据，这两位一般一起确定了QoS,和0b0000_0110进行与操作之后还要向右移1位
@@ -110,13 +110,13 @@ pub fn check_fixed_header_options(
                 0 => qos = Some(QoS::AtMostOnce),
                 1 => qos = Some(QoS::AtLeastOnce),
                 2 => qos = Some(QoS::ExactlyOnce),
-                _ => return Err(ProtoError::NotKnow),
+                x => return Err(ProtoError::QoSError(x)),
             }
             //处理b0位数据，这里决定了retain标志
             match low_4 & 0b0000_0001 {
                 0 => retain = Some(false),
                 1 => retain = Some(true),
-                _ => return Err(ProtoError::NotKnow),
+                x => return Err(ProtoError::RetainValueError(x)),
             }
             fixed_header_builder
                 .dup(dup)
@@ -129,18 +129,18 @@ pub fn check_fixed_header_options(
             match low_4 >> 3 {
                 0 => dup = Some(false),
                 1 => dup = Some(true),
-                _ => return Err(ProtoError::NotKnow),
+                x => return Err(ProtoError::DupValueError(x)),
             };
             //处理b2和b1位数据，这两位一般一起确定了QoS
             match (low_4 & 0b0000_0110) >> 1 {
                 1 => qos = None,
-                _ => return Err(ProtoError::NotKnow),
+                x => return Err(ProtoError::NotKnow),
             };
             //处理b0位数据，这里决定了retain标志
             match low_4 & 0b0000_0001 {
                 0 => retain = Some(false),
                 1 => retain = Some(true),
-                _ => return Err(ProtoError::NotKnow),
+                x => return Err(ProtoError::RetainValueError(x)),
             };
             fixed_header_builder
                 .dup(dup)

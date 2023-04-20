@@ -9,12 +9,14 @@ use super::{
 };
 
 /// 链接回执报文
-/// | Bit  | 7  | 6 | 5  | 4 | 3 | 2 | 1 | 0 |
-/// | -----| ---| ---|---|---|---|---|---|---|
-/// | byte1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-/// | byte2 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-/// | byte3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |sp |
-/// | byte4 | 连 |接 |返 |回 | 码 | C | R | C |
+/**
+ | Bit  | 7  | 6 | 5  | 4 | 3 | 2 | 1 | 0 |
+ | -----| ---| ---|---|---|---|---|---|---|
+ | byte1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+ | byte2 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+ | byte3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |sp |
+ | byte4 | 连 |接 |返 |回 | 码 | C | R | C |
+*/
 #[derive(Debug, PartialOrd, Clone, PartialEq)]
 pub struct ConnAck {
     fixed_header: FixedHeader,
@@ -52,7 +54,6 @@ pub enum ConnAckType {
 //////////////////////////////////////////////////////////
 /// 为ConnAck实现Encoder trait
 /////////////////////////////////////////////////////////
-//TODO
 impl Encoder for ConnAck {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
         let count = self.fixed_header.encode(buffer);
@@ -61,7 +62,7 @@ impl Encoder for ConnAck {
                 if let Ok(v) = self.variable_header.encode(buffer) {
                     return Ok(count + v);
                 }
-                Err(ProtoError::NotKnow)
+                Err(ProtoError::EncodeVariableheaderError)
             }
             Err(e) => Err(e),
         }

@@ -87,7 +87,7 @@ impl Decoder for UnSubscribe {
                     }
                     return Ok(UnSubscribe::new(fixed_header, variable_header, topices));
                 }
-                Err(ProtoError::NotKnow)
+                Err(ProtoError::DecodeGeneralVariableHeaderError)
             }
             Err(err) => Err(err),
         }

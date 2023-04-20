@@ -154,7 +154,7 @@ impl Decoder for Connect {
                         );
                         Ok(connect)
                     }
-                    Err(e) => Err(ProtoError::NotKnow),
+                    Err(e) => Err(e),
                 }
             }
             Err(e) => Err(ProtoError::NotKnow),
@@ -294,7 +294,7 @@ impl ConnectFlags {
             0 => QoS::AtMostOnce,
             1 => QoS::AtLeastOnce,
             2 => QoS::ExactlyOnce,
-            _ => return Err(ProtoError::NotKnow),
+            _ => return Err(ProtoError::QoSError(will_qos_value)),
         };
         // will_flag
         let will_flag = (byte & 0b0000_0100) != 0;
