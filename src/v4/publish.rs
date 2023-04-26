@@ -74,6 +74,17 @@ impl Publish {
     pub fn payload(&self) -> Bytes {
         self.payload.clone()
     }
+
+    pub fn update(mut self,message_id: usize) -> Self {
+        let fixed_header = self.fixed_header;
+        let variable_header = self.variable_header.update_message_id(message_id);
+        let payload = self.payload;
+        Self {
+            fixed_header,
+            variable_header,
+            payload,
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////
@@ -162,6 +173,10 @@ impl PublishVariableHeader {
     }
     pub fn message_id(&self) -> Option<usize> {
         self.message_id
+    }
+    pub fn update_message_id(mut self,message_id: usize) -> Self {
+        self.message_id = Some(message_id);
+        self
     }
 }
 

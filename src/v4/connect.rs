@@ -116,8 +116,6 @@ impl Encoder for Connect {
         if let Some(login) = &self.login {
             connect_flags |= login.write(buffer);
         }
-        // update connect flags
-        // buffer[flags_index] = connect_flags;
         Ok(self.len())
     }
 }
