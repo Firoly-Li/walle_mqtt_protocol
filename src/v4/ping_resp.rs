@@ -6,10 +6,13 @@ use super::{fixed_header::FixedHeaderBuilder, Decoder, Encoder};
 use crate::error::ProtoError;
 use crate::MessageType;
 
+/// 心跳应答报文
+///
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 1   | 1   | 0   | 1   | 0   | 0   | 0   | 0   |
 /// | byte2 | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+
 #[derive(Default, Debug, Clone)]
 pub struct PingResp {
     fixed_header: FixedHeader,

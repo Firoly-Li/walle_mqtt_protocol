@@ -8,13 +8,28 @@ use super::{
     Decoder, Encoder, GeneralVariableHeader, VariableDecoder,
 };
 
+/// 订阅确认
+/// SUBACK报文，反应了broker对client的SUBSCRIBE报文的回应，由于SUBSCRIBE报文可以同事订阅多个Topic，
+/// 所以SUBACK需要对每个Topic均作出回应，其顺序是按照SUBACRIBE报文中Topic的顺序排列。每个Topic的返回码
+/// 占用一个字节，允许的返回码如下：
+///
+/// | 字节 |        描述            | 7|6 |5 |4 |3 |2 |1 |0 |
+/// |-----|------------------------|--|--|--|--|--|--|--|--|
+/// |byte1| Success - Maximum QoS 0|0 |0 |0 |0 |0 |0 |0 |0 |
+/// |byte2| Success - Maximum QoS 1|0 |0 |0 |0 |0 |0 |0 |1 |
+/// |byte3| Success - Maximum QoS 2|0 |0 |0 |0 |0 |1 |0 |0 |
+/// |byte4|      Failure           |1 |0 |0 |0 |0 |0 |0 |0 |
+///
+/// 完整SUBACK报文如下：
+///
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 1   | 0   | 0   | 1   | 0   | 0   | 0   | 0   |
 /// | byte2 | 0   | 0   | 0   | 0   | 0   | 1   | 0   | 1   |
-/// | byte3 | 报   | 文   | 标  | 识   | 符  | M   | S   | B   |
-/// | byte4 | 报   | 文   | 标  | 识   | 符  | L   | S   | B   |
-/// | byte5 | x   | 0   | 0  | 0   | 0  | 0   | x   | x   |
+/// | byte3 | 报  | 文  | 标   | 识  | 符   | M   | S   | B   |
+/// | byte4 | 报  | 文  | 标   | 识  | 符   | L   | S   | B   |
+/// | byte5 | x   | 0   | 0   | 0   | 0   |  0   | x   | x   |
+///
 #[derive(Debug)]
 pub struct SubAck {
     fixed_header: FixedHeader,

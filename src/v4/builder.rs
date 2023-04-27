@@ -19,7 +19,21 @@ use crate::{error::ProtoError, MqttVersion, QoS, Topic, PROTOCOL_NAME};
 use bytes::Bytes;
 use crate::v4::un_suback::UnSubAck;
 
-/// mqtt 报文构造器
+/**
+ Mqtt报文构建器，用于快速构建具体的消息构建器：
+  - ConnectBuilder：连接报文构建器
+  - ConnAckBuilder: 连接确认报文构建器
+  - DisconnectBuilder：断开链接报文构建器
+  - PublishBuilder: 发布报文构建器
+  - PubRelBuilder: 发布释放（收到QoS 2的发布，第2部分）报文构建器
+  - PubRecBuilder: 发布收到（收到QoS 2的发布，第1部分）报文构建器
+  - PubCompBuilder:发布完成（QoS 2发布接收，第3部分）报文构建器
+  - PubAckBuilder: 发布确认报文构建器
+  - SubscribeBuilder: 订阅报文构建器
+  - SubAckBuilder:    订阅确认报文构建器
+  - UnsubscriberBuilder: 取消订阅报文构建器
+  - UnsubAckBuilder:    取消订阅确认报文构建器
+ */
 pub struct MqttMessageBuilder {}
 
 impl MqttMessageBuilder {
@@ -59,9 +73,24 @@ impl MqttMessageBuilder {
     pub fn unsub_ack() -> UnsubAckBuilder { UnsubAckBuilder::new() }
 }
 
-///////////////////////////////////
-/// Connect Builder
-///////////////////////////////////
+/**
+  连接报文构建器，用于构建MQTT CONNECT报文，构造器提供了一系列方法用于快速构建CONNECT报文，例如：
+  ```rust
+      let connect: Result<Connect, ProtoError> = MqttMessageBuilder::connect()
+              .client_id("client_01")
+              .keep_alive(10)
+              .clean_session(true)
+              .username("rump")
+              .password("mq")
+              .protocol_level(crate::MqttVersion::V4)
+              .retain(false)
+              .will_qos(crate::QoS::AtLeastOnce)
+              .will_topic("/a")
+              .will_message(Bytes::from_static(b"offline"))
+              .build();
+     ```
+
+ */
 pub struct ConnectBuilder {
     protocol_level: MqttVersion,
     keep_alive: u16,

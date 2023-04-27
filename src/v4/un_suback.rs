@@ -24,7 +24,7 @@ impl UnSubAck {
 }
 
 //////////////////////////////////////////////////////
-/// 为PubComp实现Encoder trait
+/// 为UnSubAck实现Encoder trait
 //////////////////////////////////////////////////////
 impl Encoder for UnSubAck {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {

@@ -10,12 +10,14 @@ use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
 /// 发布确认报文
 /// PUBACK报文分为两部分，固定头和可变头，其中固定头的内容是固定的，
 /// 可变头中存放的是消息id(message_id)
+///
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 0   | 1   | 0   | 0   | 0   | 0   | 0   | 0   |
 /// | byte2 | 0   | 0   | 0   | 0   | 0   | 0   | 1   | 0   |
 /// | byte3 | 报   | 文   | 标  | 识   | 符  | M   | S   | B   |
 /// | byte4 | 报   | 文   | 标  | 识   | 符  | L   | S   | B   |
+///
 #[derive(Debug)]
 pub struct PubAck {
     fixed_header: FixedHeader,

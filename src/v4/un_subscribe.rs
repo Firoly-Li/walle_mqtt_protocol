@@ -8,12 +8,14 @@ use super::{
     Decoder, Encoder, GeneralVariableHeader,
 };
 
+
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 1   | 0   | 1   | 1   | 0   | 0   | 0   | 0   |
 /// | byte2 | 0   | 0   | 0   | 0   | 0   | 0   | 1   | 0   |
 /// | byte3 | 报   | 文   | 标  | 识   | 符  | M   | S   | B   |
 /// | byte4 | 报   | 文   | 标  | 识   | 符  | L   | S   | B   |
+
 #[derive(Debug, Clone)]
 pub struct UnSubscribe {
     fixed_header: FixedHeader,

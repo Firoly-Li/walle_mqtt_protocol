@@ -6,12 +6,14 @@ use crate::error::ProtoError;
 use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
+
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 1   | 1   | 0   | 0   | 0   | 0   | 1   | 0   |
 /// | byte2 | 0   | 0   | 0   | 0   | 0   | 0   | 1   | 0   |
-/// | byte3 | 报   | 文   | 标  | 识   | 符  | M   | S   | B   |
-/// | byte4 | 报   | 文   | 标  | 识   | 符  | L   | S   | B   |
+/// | byte3 | 报   | 文   | 标  | 识   | 符  | M  | S   | B  |
+/// | byte4 | 报   | 文   | 标  | 识   | 符  | L  | S   | B  |
+
 #[derive(Debug, Clone)]
 pub struct PubRel {
     fixed_header: FixedHeader,

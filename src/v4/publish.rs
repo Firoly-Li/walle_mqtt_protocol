@@ -10,9 +10,13 @@ use super::{
     Decoder, Encoder, VariableDecoder,
 };
 
+/// 一个字节表示的最大长度
 pub const ONE_BYTE_MAX_LEN: usize = 127;
+/// 两个字节表示的最大长度
 pub const TWO_BYTE_MAX_LEN: usize = 16383;
+/// 三个字节表示的最大长度
 pub const THREE_BYTE_MAX_LEN: usize = 2097151;
+/// 四个字节表示的最大长度
 pub const FOUR_BYTE_MAX_LEN: usize = 268435455;
 
 /// 一个完整的publish报文的格式如下：
@@ -40,6 +44,7 @@ pub const FOUR_BYTE_MAX_LEN: usize = 268435455;
 /// | 19   | 0   | 0   | 1   | 1   | 1   | 0   | 0   | 0   | 56   | 8        |
 /// | 20   | 0   | 0   | 1   | 1   | 1   | 0   | 0   | 1   | 57   | 9        |
 /// | 21   | 0   | 0   | 1   | 1   | 0   | 0   | 0   | 0   | 48   | 0        |
+
 #[derive(Debug, Clone)]
 pub struct Publish {
     // 固定报头

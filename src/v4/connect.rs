@@ -8,7 +8,8 @@ use super::{
     Decoder, Encoder, VariableDecoder,
 };
 //////////////////////////////////////////////////////
-/// 为FixedHeader实现Encoder trait
+/// Connect报文
+///
 //////////////////////////////////////////////////////
 /// 客户端连接报文
 #[derive(Debug, Clone, PartialEq)]
@@ -75,9 +76,6 @@ impl Encoder for Connect {
             MqttVersion::V4 => buffer.put_u8(0x04),
             MqttVersion::V5 => buffer.put_u8(0x05),
         }
-
-        let flags_index = count + 2 + 4 + 1;
-
         // connect_flags
         let mut connect_flags = 0;
         if self.variable_header.connect_flags.clean_session {
@@ -166,13 +164,13 @@ impl Decoder for Connect {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConnectVariableHeader {
     // 协议名称
-    pub protocol_name: String,
+    protocol_name: String,
     // 协议级别
-    pub protocol_level: MqttVersion,
+    protocol_level: MqttVersion,
     // 连接标志
-    pub connect_flags: ConnectFlags,
+    connect_flags: ConnectFlags,
     // 心跳
-    pub keep_alive: u16,
+    keep_alive: u16,
 }
 
 impl ConnectVariableHeader {
@@ -241,14 +239,23 @@ impl VariableDecoder for ConnectVariableHeader {
     }
 }
 
+/**
+连接标志位，连接标志字节包含了一些用于指定MQTT链接行为的参数，它还指出了有效载荷中的字段是否存在
+```text
+| bit  |       7        |       6       |       5     |     4    |     3    |     2     |       1       |     0    |
+| ---- | -------------- | ------------- | ----------- | -------- | -------- | --------- | ------------- | -------- |
+|     | User Name Flag  | Password Flag | Will Retain | Will Qos | Will QoS | Will Flag | Clean Session | Reserved |
+|byte8|         x       |       x       |       x     |    x      |    x    |      x    |        x      |    0     |
+```
+ */
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConnectFlags {
-    pub username_flag: bool,
-    pub password_flag: bool,
-    pub will_retain: bool,
-    pub will_qos: QoS,
-    pub will_flag: bool,
-    pub clean_session: bool,
+    username_flag: bool,
+    password_flag: bool,
+    will_retain: bool,
+    will_qos: QoS,
+    will_flag: bool,
+    clean_session: bool,
 }
 
 impl ConnectFlags {
