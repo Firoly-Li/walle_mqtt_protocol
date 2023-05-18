@@ -76,12 +76,13 @@ pub trait Encoder: Sync + Send + 'static {
 pub trait Decoder: Sync + Send + 'static {
     // 定义的返回类型
     type Item;
+    // 错误类型
     type Error;
     // 将bytes解析为对应的报文
     fn decode(bytes: Bytes) -> Result<Self::Item, Self::Error>;
 }
 
-
+/// 可变报头的解码器
 pub trait VariableDecoder: Sync + Send + 'static {
     // 定义的返回类型
     type Item;
@@ -112,7 +113,7 @@ impl GeneralVariableHeader {
 }
 
 //////////////////////////////////////////////////////
-/// 为SubscribeVariableHeader实现Encoder trait
+/// 为GeneralVariableHeader实现Encoder trait
 //////////////////////////////////////////////////////
 impl Encoder for GeneralVariableHeader {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
@@ -123,7 +124,7 @@ impl Encoder for GeneralVariableHeader {
 }
 
 //////////////////////////////////////////////////////
-/// 为SubscribeVariableHeader实现Decoder trait
+/// 为GeneralVariableHeader实现Decoder trait
 //////////////////////////////////////////////////////
 impl VariableDecoder for GeneralVariableHeader {
     type Item = GeneralVariableHeader;

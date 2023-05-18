@@ -49,7 +49,7 @@ impl Encoder for PubAck {
                     buffer.put_u16(self.variable_header.message_id() as u16);
                     return Ok(4);
                 }
-                Err(ProtoError::EncodeVariableheaderError)
+                Err(ProtoError::EncodeVariableHeaderError)
             }
             Err(err) => Err(err),
         }

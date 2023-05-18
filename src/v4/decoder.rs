@@ -23,9 +23,7 @@ pub fn read_fixed_header(stream: &mut Bytes) -> Result<FixedHeader, ProtoError> 
             let resp = check_fixed_header_options(byte1, message_type);
             // println!("response = {:?}", resp);
             match resp {
-                Ok(fixed_header) => {
-                    check_remain_length(iter, fixed_header)
-                }
+                Ok(fixed_header) => check_remain_length(iter, fixed_header),
                 Err(err) => Err(err),
             }
         }

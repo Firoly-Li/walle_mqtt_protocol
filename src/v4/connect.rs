@@ -9,16 +9,14 @@ use super::{
 };
 //////////////////////////////////////////////////////
 /// Connect报文
-///
 //////////////////////////////////////////////////////
-/// 客户端连接报文
 #[derive(Debug, Clone, PartialEq)]
 pub struct Connect {
     // 固定报头
     pub fixed_header: FixedHeader,
     // 可变报头
     pub variable_header: ConnectVariableHeader,
-
+    // 客户端id
     pub client_id: String,
     // 客户端遗嘱信息
     pub last_will: Option<LastWill>,
@@ -241,12 +239,12 @@ impl VariableDecoder for ConnectVariableHeader {
 
 /**
 连接标志位，连接标志字节包含了一些用于指定MQTT链接行为的参数，它还指出了有效载荷中的字段是否存在
-```text
+
 | bit  |       7        |       6       |       5     |     4    |     3    |     2     |       1       |     0    |
 | ---- | -------------- | ------------- | ----------- | -------- | -------- | --------- | ------------- | -------- |
 |     | User Name Flag  | Password Flag | Will Retain | Will Qos | Will QoS | Will Flag | Clean Session | Reserved |
 |byte8|         x       |       x       |       x     |    x      |    x    |      x    |        x      |    0     |
-```
+
  */
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConnectFlags {

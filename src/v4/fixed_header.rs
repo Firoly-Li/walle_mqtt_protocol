@@ -148,7 +148,9 @@ fn connect_fixed_header_encode(
 ) -> Result<usize, ProtoError> {
     buffer.put_u8(0b0001_0000);
     if fixed_header.remaining_length() > 268_435_455 {
-        return Err(ProtoError::OutOfMaxRemainingLength(fixed_header.remaining_length));
+        return Err(ProtoError::OutOfMaxRemainingLength(
+            fixed_header.remaining_length,
+        ));
     }
     let mut done = false;
     let mut x = fixed_header.remaining_length();
@@ -561,7 +563,7 @@ fn encode_remaining_len(remaining_len: usize, buffer: &mut BytesMut) -> Result<u
         buffer.put_u8(byte4 as u8);
         resp = 4;
     } else {
-       return  Err(ProtoError::OutOfMaxRemainingLength(remaining_len));
+        return Err(ProtoError::OutOfMaxRemainingLength(remaining_len));
     }
     Ok(resp)
 }

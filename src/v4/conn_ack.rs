@@ -63,7 +63,7 @@ impl Encoder for ConnAck {
                 if let Ok(v) = self.variable_header.encode(buffer) {
                     return Ok(count + v);
                 }
-                Err(ProtoError::EncodeVariableheaderError)
+                Err(ProtoError::EncodeVariableHeaderError)
             }
             Err(e) => Err(e),
         }
@@ -146,12 +146,11 @@ impl Encoder for ConnAckVariableHeader {
                 buffer.put_u8(0b0000_0000);
                 buffer.put_u8(0b0000_0101);
                 Ok(2)
-            }
-            // ConnAckType::Failed => {
-            //     buffer.put_u8(0b0000_0000);
-            //     buffer.put_u8(0b0000_0110);
-            //     Ok(2)
-            // }
+            } // ConnAckType::Failed => {
+              //     buffer.put_u8(0b0000_0000);
+              //     buffer.put_u8(0b0000_0110);
+              //     Ok(2)
+              // }
         }
     }
 }

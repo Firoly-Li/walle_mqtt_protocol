@@ -21,13 +21,12 @@ pub enum ProtoError {
     #[error("解码GeneralVariableHeader出错！")]
     DecodeGeneralVariableHeaderError,
     #[error("解码fixedHeader出错！")]
-    DecodeFixedleHeaderError,
+    DecodeFixedHeaderError,
     #[error("编码variable_header错误！")]
-    EncodeVariableheaderError,
+    EncodeVariableHeaderError,
     #[error("编码remaining_length错误！")]
-    EncodeRemainingLengthError
+    EncodeRemainingLengthError,
 }
-
 
 /// 消息构建错误相关
 #[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]

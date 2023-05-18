@@ -15,25 +15,25 @@ use crate::v4::pub_ack::PubAck;
 use crate::v4::pub_comp::PubComp;
 use crate::v4::pub_rec::PubRec;
 use crate::v4::pub_rel::PubRel;
+use crate::v4::un_suback::UnSubAck;
 use crate::{error::ProtoError, MqttVersion, QoS, Topic, PROTOCOL_NAME};
 use bytes::Bytes;
-use crate::v4::un_suback::UnSubAck;
 
 /**
- Mqtt报文构建器，用于快速构建具体的消息构建器：
-  - ConnectBuilder：连接报文构建器
-  - ConnAckBuilder: 连接确认报文构建器
-  - DisconnectBuilder：断开链接报文构建器
-  - PublishBuilder: 发布报文构建器
-  - PubRelBuilder: 发布释放（收到QoS 2的发布，第2部分）报文构建器
-  - PubRecBuilder: 发布收到（收到QoS 2的发布，第1部分）报文构建器
-  - PubCompBuilder:发布完成（QoS 2发布接收，第3部分）报文构建器
-  - PubAckBuilder: 发布确认报文构建器
-  - SubscribeBuilder: 订阅报文构建器
-  - SubAckBuilder:    订阅确认报文构建器
-  - UnsubscriberBuilder: 取消订阅报文构建器
-  - UnsubAckBuilder:    取消订阅确认报文构建器
- */
+Mqtt报文构建器，用于快速构建具体的消息构建器：
+ - ConnectBuilder：连接报文构建器
+ - ConnAckBuilder: 连接确认报文构建器
+ - DisconnectBuilder：断开链接报文构建器
+ - PublishBuilder: 发布报文构建器
+ - PubRelBuilder: 发布释放（收到QoS 2的发布，第2部分）报文构建器
+ - PubRecBuilder: 发布收到（收到QoS 2的发布，第1部分）报文构建器
+ - PubCompBuilder:发布完成（QoS 2发布接收，第3部分）报文构建器
+ - PubAckBuilder: 发布确认报文构建器
+ - SubscribeBuilder: 订阅报文构建器
+ - SubAckBuilder:    订阅确认报文构建器
+ - UnsubscriberBuilder: 取消订阅报文构建器
+ - UnsubAckBuilder:    取消订阅确认报文构建器
+*/
 pub struct MqttMessageBuilder {}
 
 impl MqttMessageBuilder {
@@ -70,28 +70,31 @@ impl MqttMessageBuilder {
     pub fn unsubscriber() -> UnsubscriberBuilder {
         UnsubscriberBuilder::new()
     }
-    pub fn unsub_ack() -> UnsubAckBuilder { UnsubAckBuilder::new() }
+    pub fn unsub_ack() -> UnsubAckBuilder {
+        UnsubAckBuilder::new()
+    }
 }
 
 /**
-  连接报文构建器，用于构建MQTT CONNECT报文，构造器提供了一系列方法用于快速构建CONNECT报文，例如：
-  ```rust
-      let connect: Result<Connect, ProtoError> = MqttMessageBuilder::connect()
-              .client_id("client_01")
-              .keep_alive(10)
-              .clean_session(true)
-              .username("rump")
-              .password("mq")
-              .protocol_level(crate::MqttVersion::V4)
-              .retain(false)
-              .will_qos(crate::QoS::AtLeastOnce)
-              .will_topic("/a")
-              .will_message(Bytes::from_static(b"offline"))
-              .build();
-     ```
+ 连接报文构建器，用于构建MQTT CONNECT报文，构造器提供了一系列方法用于快速构建CONNECT报文，例如：
+ ```rust
+     let connect: Result<Connect, ProtoError> = MqttMessageBuilder::connect()
+             .client_id("client_01")
+             .keep_alive(10)
+             .clean_session(true)
+             .username("rump")
+             .password("mq")
+             .protocol_level(crate::MqttVersion::V4)
+             .retain(false)
+             .will_qos(crate::QoS::AtLeastOnce)
+             .will_topic("/a")
+             .will_message(Bytes::from_static(b"offline"))
+             .build();
+    ```
 
- */
+*/
 pub struct ConnectBuilder {
+
     protocol_level: MqttVersion,
     keep_alive: u16,
     client_id: String,
@@ -119,46 +122,57 @@ impl ConnectBuilder {
             will_message: None,
         }
     }
+    /// 设置protocol_level
     pub fn protocol_level(mut self, protocol_level: MqttVersion) -> Self {
         self.protocol_level = protocol_level;
         self
     }
+    /// 设置keep_alive
     pub fn keep_alive(mut self, keep_alive: u16) -> Self {
         self.keep_alive = keep_alive;
         self
     }
+    /// 设置client_id
     pub fn client_id(mut self, client_id: &str) -> Self {
         self.client_id = client_id.to_string();
         self
     }
+    /// 设置clean_session
     pub fn clean_session(mut self, clean_session: bool) -> Self {
         self.clean_session = clean_session;
         self
     }
+    /// 设置username
     pub fn username(mut self, username: &str) -> Self {
         self.username = Some(username.to_string());
         self
     }
+    /// 设置password
     pub fn password(mut self, password: &str) -> Self {
         self.password = Some(password.to_string());
         self
     }
+    /// 设置will_qos
     pub fn will_qos(mut self, will_qos: QoS) -> Self {
         self.will_qos = will_qos;
         self
     }
+    /// 设置will_topic
     pub fn will_topic(mut self, will_topic: &str) -> Self {
         self.will_topic = Some(will_topic.to_string());
         self
     }
+    /// 设置retain
     pub fn retain(mut self, retain: bool) -> Self {
         self.retain = retain;
         self
     }
+    /// 设置will_message
     pub fn will_message(mut self, will_message: Bytes) -> Self {
         self.will_message = Some(will_message);
         self
     }
+    /// 构建CONNECT报文
     pub fn build(self) -> Result<Connect, ProtoError> {
         // 初始化值
         let client_id = self.client_id;
@@ -191,28 +205,27 @@ impl ConnectBuilder {
         let mut login = None;
         // 构建 Login
         if self.username.is_some() && self.password.is_some() {
-           login = Some(Login::new(self.username.unwrap(), self.password.unwrap()));
+            login = Some(Login::new(self.username.unwrap(), self.password.unwrap()));
         }
         // 计算login_len
         let login_len = match &login {
             Some(login) => login.len(),
-            None => 0
+            None => 0,
         };
         // 构建LastWill
         let last_will: Option<LastWill> = match will_topic {
-            Some(topic) =>{
-                Some(LastWill::new(
-            topic,
-            self.will_message.unwrap(),
-            self.will_qos,
-            self.retain,))
-            },
-            None => None
+            Some(topic) => Some(LastWill::new(
+                topic,
+                self.will_message.unwrap(),
+                self.will_qos,
+                self.retain,
+            )),
+            None => None,
         };
         // 计算last_will_len
         let last_will_len = match &last_will {
             Some(t) => t.len(),
-            None => 0
+            None => 0,
         };
         let remaining_length = {
             let mut len = 2 + PROTOCOL_NAME.len() // protocol name
@@ -293,45 +306,47 @@ impl PublishBuilder {
             payload: Bytes::new(),
         }
     }
-
+    /// 设置topic
     pub fn topic(mut self, topic: &str) -> Self {
         self.topic = topic.to_string();
         self
     }
-
+    /// 设置message_id
     pub fn message_id(mut self, message_id: usize) -> Self {
         self.message_id = message_id;
         self
     }
-
+    /// 设置qos
     pub fn qos(mut self, qos: QoS) -> Self {
         self.qos = Some(qos);
         self
     }
-
+    /// 设置retain
     pub fn retain(mut self, retain: bool) -> Self {
         self.retain = Some(retain);
         self
     }
-
+    /// 设置dup
     pub fn dup(mut self, dup: bool) -> Self {
         self.dup = Some(dup);
         self
     }
+    /// 以String的方式设置payload
     pub fn payload_string(mut self, payload: String) -> Self {
         self.payload = Bytes::from(payload);
         self
     }
+    /// 以&str的方式设置payload
     pub fn payload_str(mut self, payload: &str) -> Self {
         self.payload = Bytes::from(payload.to_string());
         self
     }
+    /// 设置payload
     pub fn payload(mut self, payload: Bytes) -> Self {
         self.payload = payload;
         self
     }
-
-
+    /// 构建PUBLISH报文
     pub fn build(self) -> Result<Publish, ProtoError> {
         //1、构建fixed_header
         let fixed_header = FixedHeaderBuilder::new()
@@ -610,9 +625,7 @@ pub struct UnsubAckBuilder {
 
 impl UnsubAckBuilder {
     pub fn new() -> Self {
-        Self {
-            message_id: 0
-        }
+        Self { message_id: 0 }
     }
 
     pub fn message_id(mut self, message_id: usize) -> Self {
@@ -620,22 +633,18 @@ impl UnsubAckBuilder {
         self
     }
 
-    pub fn build(mut self) -> Result<UnSubAck,ProtoError> {
+    pub fn build(mut self) -> Result<UnSubAck, ProtoError> {
         let resp = FixedHeaderBuilder::new().un_suback().build();
         match resp {
             Ok(mut fixed_header) => {
                 let variable_header = GeneralVariableHeader::new(self.message_id);
                 fixed_header.set_remaining_length(variable_header.len());
-                Ok(UnSubAck::new(
-                    fixed_header,
-                    variable_header
-                ))
+                Ok(UnSubAck::new(fixed_header, variable_header))
             }
             Err(e) => Err(e),
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

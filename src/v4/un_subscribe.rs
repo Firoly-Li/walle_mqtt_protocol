@@ -8,7 +8,6 @@ use super::{
     Decoder, Encoder, GeneralVariableHeader,
 };
 
-
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 1   | 0   | 1   | 1   | 0   | 0   | 0   | 0   |

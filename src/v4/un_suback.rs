@@ -2,10 +2,10 @@ use super::{
     fixed_header::{FixedHeader, FixedHeaderBuilder},
     Decoder, Encoder,
 };
-use crate::{error::ProtoError, MessageType};
-use bytes::{Buf, BufMut, Bytes, BytesMut};
 use crate::v4::builder::MqttMessageBuilder;
 use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
+use crate::{error::ProtoError, MessageType};
+use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 #[derive(Debug)]
 pub struct UnSubAck {
@@ -14,9 +14,11 @@ pub struct UnSubAck {
 }
 
 impl UnSubAck {
-    pub fn new(fixed_header: FixedHeader,
-               variable_header: GeneralVariableHeader) -> Self {
-        Self { fixed_header, variable_header }
+    pub fn new(fixed_header: FixedHeader, variable_header: GeneralVariableHeader) -> Self {
+        Self {
+            fixed_header,
+            variable_header,
+        }
     }
     pub fn message_id(&self) -> usize {
         self.variable_header.message_id
@@ -55,8 +57,8 @@ impl Decoder for UnSubAck {
                     });
                 }
                 Err(ProtoError::DecodeGeneralVariableHeaderError)
-            },
-            Err(e) => Err(e)
+            }
+            Err(e) => Err(e),
         }
     }
 }
@@ -65,8 +67,8 @@ impl Decoder for UnSubAck {
 //         return Err(ProtoError::NotKnow);
 //     }
 //     let resp = decoder::read_fixed_header(&mut bytes);
-//     
-//     
+//
+//
 //     if let Ok(message_type) = FixedHeader::check(&mut bytes) {
 //         if message_type == MessageType::UNSUBACK {
 //             let _b1 = bytes.get_u16();
@@ -79,4 +81,3 @@ impl Decoder for UnSubAck {
 //         Err(ProtoError::NotKnow)
 //     }
 // }
-

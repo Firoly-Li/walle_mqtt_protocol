@@ -6,7 +6,6 @@ use crate::error::ProtoError;
 use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
-
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 1   | 1   | 0   | 0   | 0   | 0   | 1   | 0   |
@@ -45,7 +44,7 @@ impl Encoder for PubRel {
                     buffer.put_u16(self.variable_header.message_id() as u16);
                     return Ok(4);
                 }
-                Err(ProtoError::EncodeVariableheaderError)
+                Err(ProtoError::EncodeVariableHeaderError)
             }
             Err(err) => Err(err),
         }
