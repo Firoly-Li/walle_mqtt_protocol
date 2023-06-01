@@ -48,9 +48,10 @@ impl Decoder for UnSubAck {
         let resp = decoder::read_fixed_header(&mut bytes);
         match resp {
             Ok(fixed_header) => {
+                let qos = fixed_header.qos();
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
-                if let Ok(variable_header) = GeneralVariableHeader::decode(&mut bytes) {
+                if let Ok(variable_header) = GeneralVariableHeader::decode(&mut bytes,qos) {
                     return Ok(UnSubAck {
                         fixed_header,
                         variable_header,

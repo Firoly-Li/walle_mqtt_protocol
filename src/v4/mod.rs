@@ -34,6 +34,7 @@ use crate::error::ProtoError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 use anyhow::Result;
+use crate::QoS;
 
 /// MQTT报文，包含了MQTT-v3.1.1版本中的所有MQTT报文
 #[derive(Debug)]
@@ -87,7 +88,7 @@ pub trait VariableDecoder: Sync + Send + 'static {
     // 定义的返回类型
     type Item;
     // 将bytes解析为对应的报文
-    fn decode(bytes: &mut Bytes) -> Result<Self::Item, ProtoError>;
+    fn decode(bytes: &mut Bytes,qos: Option<QoS>) -> Result<Self::Item, ProtoError>;
 }
 
 //////////////////////////////////////////////////////
@@ -129,7 +130,7 @@ impl Encoder for GeneralVariableHeader {
 impl VariableDecoder for GeneralVariableHeader {
     type Item = GeneralVariableHeader;
 
-    fn decode(bytes: &mut Bytes) -> Result<Self::Item, ProtoError> {
+    fn decode(bytes: &mut Bytes,qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
         let message_id = bytes.get_u16() as usize;
         Ok(GeneralVariableHeader { message_id })
     }

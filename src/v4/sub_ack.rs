@@ -94,10 +94,11 @@ impl Decoder for SubAck {
         let resp = decoder::read_fixed_header(&mut bytes);
         match resp {
             Ok(fixed_header) => {
+                let qos = fixed_header.qos();
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
                 // 读取variable_header
-                let resp = GeneralVariableHeader::decode(&mut bytes);
+                let resp = GeneralVariableHeader::decode(&mut bytes,qos);
                 match resp {
                     Ok(variable_header) => {
                         let acks: Vec<u8> = Vec::from(bytes);

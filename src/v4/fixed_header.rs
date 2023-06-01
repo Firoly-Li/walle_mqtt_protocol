@@ -12,6 +12,7 @@ use crate::{
 
 use crate::error::BuildError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
+use tracing::info;
 
 /**
  固定报头
@@ -89,6 +90,9 @@ impl FixedHeader {
         self.len = len;
     }
 
+    pub fn set_qos(&mut self, qos: QoS) {
+        self.qos = Some(qos)
+    }
     // 根据mqtt报文首字节校验fixed_header是否正确,check方法执行之后byte的首字节去掉了
     pub fn check(mut byte1: &mut Bytes) -> Result<MessageType, BuildError> {
         let b = byte1.get_u8();
@@ -209,7 +213,7 @@ fn publish_fixed_header_encode(
     let mut byte1: u8 = 0b0000_0000;
     let qos = fixed_header.qos().unwrap();
     match qos {
-        QoS::AtMostOnce => {}
+        QoS::AtMostOnce => byte1 = 0b0000_0000,
         QoS::AtLeastOnce => byte1 = 0b0011_0000 | 0b0000_0010,
         QoS::ExactlyOnce => byte1 = 0b0011_0000 | 0b0000_0100,
     }
@@ -225,6 +229,7 @@ fn publish_fixed_header_encode(
     resp += 1;
     // 写入剩余长度
     let remaining_length = fixed_header.remaining_length();
+    info!("remaining_length = {}",remaining_length);
     let encode_resp = encode_remaining_len(remaining_length, buffer);
     match encode_resp {
         Ok(size) => Ok(resp + size),

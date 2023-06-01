@@ -2,6 +2,7 @@ use super::fixed_header::{FixedHeader, FixedHeaderBuilder};
 use crate::{error::ProtoError, MessageType, QoS};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 use std::slice::Iter;
+use tracing::warn;
 
 /// 从Bytes中读取固定报头
 pub fn read_fixed_header(stream: &mut Bytes) -> Result<FixedHeader, ProtoError> {
@@ -42,13 +43,13 @@ pub fn parse_fixed_header(mut stream: Iter<u8>) -> Result<FixedHeader, ProtoErro
     let resp = check_fixed_header_type(byte1);
     match resp {
         Ok(message_type) => {
-            // println!("message_type = {:?}", message_type);
+            println!("message_type = {:?}", message_type);
             // 优先得到fixed_header（此时的fixed_header还没有计算剩余长度）
             let resp = check_fixed_header_options(byte1, message_type);
             // println!("response = {:?}", resp);
             match resp {
                 Ok(fixed_header) => {
-                    // println!("fixed_header = {:?}", fixed_header);
+                    println!("fixed_header = {:?}", fixed_header);
                     // 计算fixed_header的remaing_length)(剩余长度)
                     check_remain_length(stream, fixed_header)
                 }
@@ -176,6 +177,7 @@ pub fn check_remain_length(
         }
         shift += 7;
         if shift > 21 {
+            warn!("报文长度过长！");
             return Err(ProtoError::NotKnow);
         }
     }

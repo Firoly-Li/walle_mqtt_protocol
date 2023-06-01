@@ -1,6 +1,7 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 use crate::error::ProtoError;
+use crate::QoS;
 
 use super::{
     decoder,
@@ -43,7 +44,7 @@ pub enum ConnAckType {
     Success,
     // 版本错误
     ProtoVersionError,
-    // 不符合规定的clientId
+    // 不符合规定的client_id
     IdentifierRejected,
     // 服务不可用
     ServiceUnavailable,
@@ -79,10 +80,11 @@ impl Decoder for ConnAck {
         let resp = decoder::read_fixed_header(&mut bytes);
         match resp {
             Ok(fixed_header) => {
+                let qos = fixed_header.qos();
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
                 // 读取variable_header
-                let resp = ConnAckVariableHeader::decode(&mut bytes);
+                let resp = ConnAckVariableHeader::decode(&mut bytes,qos);
                 match resp {
                     Ok(variable_header) => Ok(ConnAck {
                         fixed_header,
@@ -161,7 +163,7 @@ impl Encoder for ConnAckVariableHeader {
 impl VariableDecoder for ConnAckVariableHeader {
     type Item = ConnAckVariableHeader;
 
-    fn decode(bytes: &mut Bytes) -> Result<Self::Item, ProtoError> {
+    fn decode(bytes: &mut Bytes,qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
         let b1 = bytes.get_u8();
         if b1 == 0 {
             let b2 = bytes.get_u8();

@@ -78,23 +78,28 @@ impl MqttMessageBuilder {
 /**
  连接报文构建器，用于构建MQTT CONNECT报文，构造器提供了一系列方法用于快速构建CONNECT报文，例如：
  ```rust
-     let connect: Result<Connect, ProtoError> = MqttMessageBuilder::connect()
-             .client_id("client_01")
-             .keep_alive(10)
-             .clean_session(true)
-             .username("rump")
-             .password("mq")
-             .protocol_level(crate::MqttVersion::V4)
-             .retain(false)
-             .will_qos(crate::QoS::AtLeastOnce)
-             .will_topic("/a")
-             .will_message(Bytes::from_static(b"offline"))
-             .build();
-    ```
+*       use bytes::Bytes;
+*       use walle_mqtt_protocol::error::ProtoError;
+*       use walle_mqtt_protocol::v4::builder::MqttMessageBuilder;
+*       use walle_mqtt_protocol::v4::connect::Connect;
+*
+*          let connect: Result<Connect, ProtoError> = MqttMessageBuilder::connect()
+*              .client_id("client_01")
+*              .keep_alive(10)
+*              .clean_session(true)
+*              .username("rump")
+*              .password("mq")
+*              .protocol_level(crate::MqttVersion::V4)
+*              .retain(false)
+*              .will_qos(crate::QoS::AtLeastOnce)
+*              .will_topic("/a")
+*              .will_message(Bytes::from_static(b"offline"))
+*              .build();
+*     ```
 
-*/
+
+ */
 pub struct ConnectBuilder {
-
     protocol_level: MqttVersion,
     keep_alive: u16,
     client_id: String,
@@ -288,7 +293,7 @@ impl ConnAckBuilder {
 ///////////////////////////////////
 pub struct PublishBuilder {
     topic: String,
-    message_id: usize,
+    message_id: Option<usize>,
     qos: Option<QoS>,
     retain: Option<bool>,
     dup: Option<bool>,
@@ -299,7 +304,7 @@ impl PublishBuilder {
     fn new() -> Self {
         Self {
             topic: String::new(),
-            message_id: 0,
+            message_id: None,
             qos: None,
             retain: None,
             dup: None,
@@ -313,7 +318,7 @@ impl PublishBuilder {
     }
     /// 设置message_id
     pub fn message_id(mut self, message_id: usize) -> Self {
-        self.message_id = message_id;
+        self.message_id = Some(message_id);
         self
     }
     /// 设置qos
@@ -356,9 +361,30 @@ impl PublishBuilder {
             .qos(self.qos)
             .build();
         //2、构建variable_header
-        let variable_header = PublishVariableHeader::new(self.topic, Some(self.message_id));
+        // let variable_header = PublishVariableHeader::new(self.topic, self.message_id);
+        let variable_header = match self.qos {
+            Some(qos) => {
+                if qos == QoS::AtMostOnce {
+                    PublishVariableHeader::new(self.topic, None,Some( QoS::AtMostOnce))
+                }else {
+                    PublishVariableHeader::new(self.topic, self.message_id,Some(qos))
+                }
+            },
+            None => PublishVariableHeader::new(self.topic, None,None)
+        };
+
         //3、计算剩余长度
-        let remaining_length = variable_header.variable_header_len() + self.payload.len() + 2;
+         let remaining_length = match self.qos{
+            Some(qos) => {
+                if qos == QoS::AtMostOnce {
+                    variable_header.variable_header_len() + self.payload.len()
+                }else {
+                    variable_header.variable_header_len() + self.payload.len() + 2
+                }
+            },
+            None => variable_header.variable_header_len() + self.payload.len()
+        };
+        // let remaining_length = variable_header.variable_header_len() + self.payload.len() + 2;
         //4、构建Publish
         match fixed_header {
             Ok(mut fixed_header) => {
