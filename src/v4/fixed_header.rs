@@ -1,18 +1,12 @@
-use std::slice::Iter;
-
 use super::{
     publish::{FOUR_BYTE_MAX_LEN, ONE_BYTE_MAX_LEN, THREE_BYTE_MAX_LEN, TWO_BYTE_MAX_LEN},
-    Decoder, Encoder,
+    Encoder,
 };
-use crate::{
-    error::ProtoError,
-    v4::decoder::{check_fixed_header_options, check_fixed_header_type, check_remain_length},
-    MessageType, QoS,
-};
+use crate::{error::ProtoError, MessageType, QoS};
 
 use crate::error::BuildError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
-use tracing::info;
+use tracing::{debug, info};
 
 /**
  固定报头
@@ -38,7 +32,7 @@ pub struct FixedHeader {
     // 剩余长度
     remaining_length: usize,
     // fixed_header本身的长度
-    len: usize,
+    fixed_handler_len: usize,
 }
 
 impl FixedHeader {
@@ -48,7 +42,7 @@ impl FixedHeader {
         qos: Option<QoS>,
         retain: Option<bool>,
         remaining_length: usize,
-        len: usize,
+        fixed_handler_len: usize,
     ) -> Self {
         Self {
             message_type,
@@ -56,7 +50,7 @@ impl FixedHeader {
             qos,
             retain,
             remaining_length,
-            len,
+            fixed_handler_len,
         }
     }
     // message_type
@@ -84,10 +78,10 @@ impl FixedHeader {
     }
     // 返回fixed_header的长度
     pub fn len(&self) -> usize {
-        self.len
+        self.fixed_handler_len
     }
     pub fn set_len(&mut self, len: usize) {
-        self.len = len;
+        self.fixed_handler_len = len;
     }
 
     pub fn set_qos(&mut self, qos: QoS) {
@@ -213,7 +207,7 @@ fn publish_fixed_header_encode(
     let mut byte1: u8 = 0b0000_0000;
     let qos = fixed_header.qos().unwrap();
     match qos {
-        QoS::AtMostOnce => byte1 = 0b0000_0000,
+        QoS::AtMostOnce => byte1 = 0b0011_0000,
         QoS::AtLeastOnce => byte1 = 0b0011_0000 | 0b0000_0010,
         QoS::ExactlyOnce => byte1 = 0b0011_0000 | 0b0000_0100,
     }
@@ -229,7 +223,6 @@ fn publish_fixed_header_encode(
     resp += 1;
     // 写入剩余长度
     let remaining_length = fixed_header.remaining_length();
-    info!("remaining_length = {}",remaining_length);
     let encode_resp = encode_remaining_len(remaining_length, buffer);
     match encode_resp {
         Ok(size) => Ok(resp + size),
@@ -496,13 +489,13 @@ impl FixedHeaderBuilder {
     pub fn build(self) -> Result<FixedHeader, ProtoError> {
         let resp = remaining_length_len(self.remaining_length);
         match resp {
-            Ok(size) => Ok(FixedHeader {
+            Ok(remaining_length_len) => Ok(FixedHeader {
                 message_type: self.message_type,
                 dup: self.dup,
                 qos: self.qos,
                 retain: self.retain,
                 remaining_length: self.remaining_length,
-                len: size + 1,
+                fixed_handler_len: remaining_length_len + 1,
             }),
             Err(e) => Err(e),
         }
@@ -526,6 +519,7 @@ fn remaining_length_len(remaining_length: usize) -> Result<usize, ProtoError> {
 
 //TODO 添加注释, 这里可能有问题
 fn encode_remaining_len(remaining_len: usize, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
+    debug!("remaining_len = {}", remaining_len);
     let mut resp: usize = 0;
     // 1、判断remaining_len的范围
     if remaining_len < ONE_BYTE_MAX_LEN {

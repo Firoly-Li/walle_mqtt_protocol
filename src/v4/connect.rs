@@ -131,7 +131,7 @@ impl Decoder for Connect {
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
                 // 读取variable_header
-                let resp = ConnectVariableHeader::decode(&mut bytes,qos);
+                let resp = ConnectVariableHeader::decode(&mut bytes, qos);
                 match resp {
                     Ok(variable_header) => {
                         // connect报文的variable_header是固定的8个字节
@@ -206,7 +206,7 @@ impl ConnectVariableHeader {
 impl VariableDecoder for ConnectVariableHeader {
     type Item = ConnectVariableHeader;
     // 构建variable_header
-    fn decode(stream: &mut Bytes,qos: Option<QoS>) -> Result<ConnectVariableHeader, ProtoError> {
+    fn decode(stream: &mut Bytes, qos: Option<QoS>) -> Result<ConnectVariableHeader, ProtoError> {
         let resp = read_mqtt_string(stream);
         match resp {
             Ok(protocol_name) => {

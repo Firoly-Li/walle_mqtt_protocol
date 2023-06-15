@@ -1,7 +1,5 @@
-use std::sync::Arc;
-
 use bytes::{Buf, BufMut, Bytes, BytesMut};
-use tracing::info;
+use tracing::{debug, info};
 
 use crate::error::ProtoError;
 use crate::QoS;
@@ -103,12 +101,16 @@ impl Publish {
 impl Encoder for Publish {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
         let resp = self.fixed_header.encode(buffer);
+        debug!("fixed_handler buffer = {:?}", buffer);
+        let qos = self.fixed_header.qos().unwrap();
         match resp {
             Ok(fixed_header_len) => {
                 let resp = self.variable_header.encode(buffer);
                 match resp {
                     Ok(variable_header_len) => {
+                        debug!("fixed_handler + variable_headler buffer = {:?}", buffer);
                         buffer.put(self.payload());
+                        debug!("buffer = {:?}", buffer);
                         let resp = fixed_header_len + variable_header_len + self.payload().len();
                         Ok(resp)
                     }
@@ -137,7 +139,7 @@ impl Decoder for Publish {
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
                 // 读取variable_header
-                let resp = PublishVariableHeader::decode(&mut bytes,qos);
+                let resp = PublishVariableHeader::decode(&mut bytes, qos);
                 match resp {
                     Ok(variable_header) => Ok(Publish {
                         fixed_header,
@@ -165,25 +167,25 @@ pub struct PublishVariableHeader {
     message_id: Option<usize>,
 }
 impl PublishVariableHeader {
-    pub fn new(topic: String, message_id: Option<usize>,qos: Option<QoS>) -> Self {
+    pub fn new(topic: String, message_id: Option<usize>, qos: Option<QoS>) -> Self {
         Self {
-            variable_header_len: Self::variable_len(topic.as_str(),qos),
+            variable_header_len: Self::variable_len(topic.as_str(), qos),
             topic,
             message_id,
         }
     }
 
     //
-    fn variable_len(topic: &str,qos: Option<QoS>) -> usize {
+    fn variable_len(topic: &str, qos: Option<QoS>) -> usize {
         match qos {
-            Some(qos)=>{
+            Some(qos) => {
                 if qos == QoS::AtMostOnce {
                     topic.len() + 2
-                }else {
+                } else {
                     topic.len() + 4
                 }
-            },
-            None => topic.len() + 2
+            }
+            None => topic.len() + 2,
         }
     }
     pub fn variable_header_len(&self) -> usize {
@@ -207,7 +209,7 @@ impl PublishVariableHeader {
 impl VariableDecoder for PublishVariableHeader {
     type Item = PublishVariableHeader;
 
-    fn decode(bytes: &mut Bytes,qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
+    fn decode(bytes: &mut Bytes, qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
         // let topic_resp = read_mqtt_string(bytes);
         // let message_id_resp = read_u16(bytes);
         // if let (Ok(topic), Ok(message_id)) = (topic_resp, message_id_resp) {
@@ -217,22 +219,28 @@ impl VariableDecoder for PublishVariableHeader {
 
         let topic_resp = read_mqtt_string(bytes);
         match topic_resp {
-            Ok(topic) => {
-                match qos {
-                    Some(qos) =>{
-                        if qos == QoS::AtMostOnce {
-                            return Ok(PublishVariableHeader::new(topic, None,Some(QoS::AtMostOnce)));
-                        }else {
-                            let message_id = read_u16(bytes).unwrap();
-                            return Ok(PublishVariableHeader::new(topic, Some(message_id.into()),Some(qos)));
-                        }
-                    },
-                    None =>{
-                        return Ok(PublishVariableHeader::new(topic, None,None));
+            Ok(topic) => match qos {
+                Some(qos) => {
+                    if qos == QoS::AtMostOnce {
+                        return Ok(PublishVariableHeader::new(
+                            topic,
+                            None,
+                            Some(QoS::AtMostOnce),
+                        ));
+                    } else {
+                        let message_id = read_u16(bytes).unwrap();
+                        return Ok(PublishVariableHeader::new(
+                            topic,
+                            Some(message_id.into()),
+                            Some(qos),
+                        ));
                     }
                 }
+                None => {
+                    return Ok(PublishVariableHeader::new(topic, None, None));
+                }
             },
-            Err(e) => Err(e)
+            Err(e) => Err(e),
         }
     }
 }
@@ -240,17 +248,25 @@ impl VariableDecoder for PublishVariableHeader {
 //////////////////////////////////////////////////////////
 /// 为PublishVariableHeader实现Encoder trait
 /////////////////////////////////////////////////////////
+// todo 这里有个问题，PublishVariableHeader的长度是受到QoS影响的
 impl Encoder for PublishVariableHeader {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
+        debug!("encode PublishVariableHandler");
         let topic_len = self.topic.len();
+        debug!("topic_len = {}", topic_len);
         buffer.put_u16(topic_len as u16);
         let topic = self.topic.clone();
+        debug!("topic = {:?}", topic.as_bytes());
         buffer.put(topic.as_bytes());
-        if let Some(message_id) = self.message_id {
-            buffer.put_u16(message_id as u16);
+        let message_id = self.message_id;
+        match message_id {
+            Some(msg_id) => {
+                buffer.put_u16(msg_id as u16);
+                debug!("variable_header_len = {}", self.variable_header_len());
+                Ok(self.variable_header_len())
+            }
+            None => Ok(self.variable_header_len()),
         }
-        info!("variable_header_len = {}",self.variable_header_len);
-        Ok(self.variable_header_len)
     }
 }
 
@@ -268,8 +284,8 @@ mod tests {
             .retain(false)
             .topic("/test")
             .payload_str("hello world !")
-            .build(){
-
+            .build()
+        {
             let remaining_len = publish.fixed_header.remaining_length();
             let qos = publish.fixed_header.qos();
             let topic = publish.variable_header.topic();
@@ -277,21 +293,20 @@ mod tests {
             // encode
             let mut buffer = BytesMut::new();
             publish.encode(&mut buffer);
-            println!("buffer = {:?}",buffer);
+            println!("buffer = {:?}", buffer);
             //decode
-            if let Ok(new_publish) = Publish::decode(buffer.freeze()){
+            if let Ok(new_publish) = Publish::decode(buffer.freeze()) {
                 let new_remaining_len = new_publish.fixed_header.remaining_length();
                 let new_qos = new_publish.fixed_header.qos();
                 let new_topic = new_publish.variable_header.topic();
-                assert_eq!(remaining_len,new_remaining_len);
-                assert_eq!(qos,new_qos);
-                assert_eq!(topic,new_topic);
+                assert_eq!(remaining_len, new_remaining_len);
+                assert_eq!(qos, new_qos);
+                assert_eq!(topic, new_topic);
             }
         }
     }
 
-
-     #[test]
+    #[test]
     fn publish_to_bytes_test() {
         if let Ok(publish) = MqttMessageBuilder::publish()
             .dup(false)
@@ -300,8 +315,8 @@ mod tests {
             .retain(false)
             .topic("/test")
             .payload_str("hello world !")
-            .build(){
-
+            .build()
+        {
             let remaining_len = publish.fixed_header.remaining_length();
             let qos = publish.fixed_header.qos().unwrap();
             let topic = publish.variable_header.topic();
@@ -310,13 +325,20 @@ mod tests {
             // encode
             let mut buffer = BytesMut::new();
             publish.encode(&mut buffer);
-            println!("buffer = {:?}",buffer);
+            println!("buffer = {:?}", buffer);
 
-            let publish1 = MqttMessageBuilder::publish().dup(false).retain(false).message_id(1).topic(topic.as_str()).qos(qos).payload(payload).build().unwrap();
+            let publish1 = MqttMessageBuilder::publish()
+                .dup(false)
+                .retain(false)
+                .message_id(1)
+                .topic(topic.as_str())
+                .qos(qos)
+                .payload(payload)
+                .build()
+                .unwrap();
             let mut buffer1 = BytesMut::new();
             publish1.encode(&mut buffer1);
-            assert_eq!(buffer,buffer1);
-
+            assert_eq!(buffer, buffer1);
         }
     }
 }

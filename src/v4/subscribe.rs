@@ -91,7 +91,7 @@ impl Decoder for Subscribe {
                 let qos = fixed_header.qos();
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
-                if let Ok(variable_header) = GeneralVariableHeader::decode(&mut bytes,qos) {
+                if let Ok(variable_header) = GeneralVariableHeader::decode(&mut bytes, qos) {
                     let topices = Topic::read_topics(&mut bytes);
                     match topices {
                         Ok(topices) => {

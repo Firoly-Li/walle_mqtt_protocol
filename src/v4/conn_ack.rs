@@ -36,6 +36,10 @@ impl ConnAck {
             Err(e) => Err(e),
         }
     }
+    /// 返回CONNACK的返回类型
+    pub fn conn_ack_type(&self) -> ConnAckType {
+        self.variable_header.conn_ack_type.clone()
+    }
 }
 
 #[derive(PartialOrd, Debug, Clone, PartialEq)]
@@ -84,7 +88,7 @@ impl Decoder for ConnAck {
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
                 // 读取variable_header
-                let resp = ConnAckVariableHeader::decode(&mut bytes,qos);
+                let resp = ConnAckVariableHeader::decode(&mut bytes, qos);
                 match resp {
                     Ok(variable_header) => Ok(ConnAck {
                         fixed_header,
@@ -163,7 +167,7 @@ impl Encoder for ConnAckVariableHeader {
 impl VariableDecoder for ConnAckVariableHeader {
     type Item = ConnAckVariableHeader;
 
-    fn decode(bytes: &mut Bytes,qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
+    fn decode(bytes: &mut Bytes, qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
         let b1 = bytes.get_u8();
         if b1 == 0 {
             let b2 = bytes.get_u8();

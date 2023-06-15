@@ -43,13 +43,13 @@ pub fn parse_fixed_header(mut stream: Iter<u8>) -> Result<FixedHeader, ProtoErro
     let resp = check_fixed_header_type(byte1);
     match resp {
         Ok(message_type) => {
-            println!("message_type = {:?}", message_type);
+            // println!("message_type = {:?}", message_type);
             // 优先得到fixed_header（此时的fixed_header还没有计算剩余长度）
             let resp = check_fixed_header_options(byte1, message_type);
             // println!("response = {:?}", resp);
             match resp {
                 Ok(fixed_header) => {
-                    println!("fixed_header = {:?}", fixed_header);
+                    // println!("fixed_header = {:?}", fixed_header);
                     // 计算fixed_header的remaing_length)(剩余长度)
                     check_remain_length(stream, fixed_header)
                 }

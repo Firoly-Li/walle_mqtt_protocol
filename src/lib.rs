@@ -1,20 +1,23 @@
 /*! 一个Rust实现的mqtt协议解析库
- ```rust
+
+```rust
    use bytes::Bytes;
-   use walle_mqtt_protocol::v4::builder::MqttMessageBuilder;
+   use core_mqtt_protocol::{MqttVersion, QoS};
+   use core_mqtt_protocol::v4::builder::MqttMessageBuilder;
    let connect = MqttMessageBuilder::connect()
            .client_id("client_01")
            .keep_alive(10)
            .clean_session(true)
            .username("rump")
            .password("mq")
-           .protocol_level(crate::MqttVersion::V4)
+           .protocol_level(MqttVersion::V4)
            .retain(false)
-           .will_qos(crate::QoS::AtLeastOnce)
+           .will_qos(QoS::AtLeastOnce)
            .will_topic("/a")
            .will_message(Bytes::from_static(b"offline"))
-           .build().unwarp();
-   ```
+           .build().unwrap();
+ ```
+
 */
 
 use bytes::{BufMut, Bytes, BytesMut};

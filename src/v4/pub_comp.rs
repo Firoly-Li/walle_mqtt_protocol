@@ -67,7 +67,7 @@ impl Decoder for PubComp {
                 let variable_header_index = fixed_header.len();
                 bytes.advance(variable_header_index);
                 // 读取variable_header
-                let resp = GeneralVariableHeader::decode(&mut bytes,qos);
+                let resp = GeneralVariableHeader::decode(&mut bytes, qos);
                 match resp {
                     Ok(variable_header) => Ok(PubComp {
                         fixed_header,
