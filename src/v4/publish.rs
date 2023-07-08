@@ -102,7 +102,6 @@ impl Encoder for Publish {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
         let resp = self.fixed_header.encode(buffer);
         debug!("fixed_handler buffer = {:?}", buffer);
-        let qos = self.fixed_header.qos().unwrap();
         match resp {
             Ok(fixed_header_len) => {
                 let resp = self.variable_header.encode(buffer);
@@ -114,9 +113,7 @@ impl Encoder for Publish {
                         let resp = fixed_header_len + variable_header_len + self.payload().len();
                         Ok(resp)
                     }
-                    Err(e) => {
-                        return Err(e);
-                    }
+                    Err(e) => Err(e),
                 }
             }
             Err(e) => Err(e),
@@ -248,7 +245,6 @@ impl VariableDecoder for PublishVariableHeader {
 //////////////////////////////////////////////////////////
 /// 为PublishVariableHeader实现Encoder trait
 /////////////////////////////////////////////////////////
-// todo 这里有个问题，PublishVariableHeader的长度是受到QoS影响的
 impl Encoder for PublishVariableHeader {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
         debug!("encode PublishVariableHandler");
@@ -273,6 +269,7 @@ impl Encoder for PublishVariableHeader {
 #[cfg(test)]
 mod tests {
     use bytes::{Bytes, BytesMut};
+    use tracing::info;
 
     use crate::v4::{builder::MqttMessageBuilder, publish::Publish, Decoder, Encoder};
 
@@ -283,7 +280,7 @@ mod tests {
             .qos(crate::QoS::AtMostOnce)
             .retain(false)
             .topic("/test")
-            .payload_str("hello world !")
+            .payload_str("123456")
             .build()
         {
             let remaining_len = publish.fixed_header.remaining_length();
@@ -339,6 +336,23 @@ mod tests {
             let mut buffer1 = BytesMut::new();
             publish1.encode(&mut buffer1);
             assert_eq!(buffer, buffer1);
+        }
+    }
+
+    #[test]
+    fn creat_qos2_message_test() {
+        if let Ok(publish) = MqttMessageBuilder::publish()
+            .dup(false)
+            .qos(crate::QoS::ExactlyOnce)
+            .message_id(21362) // 当qos=0的时候设置message_id也是无效的
+            .retain(false)
+            .topic("/test")
+            .payload_str("123456")
+            .build()
+        {
+            let mut buff = BytesMut::new();
+            publish.encode(&mut buff).unwrap();
+            println!("{:?}", buff);
         }
     }
 }

@@ -450,7 +450,7 @@ mod tests {
         PROTOCOL_NAME,
     };
 
-    use super::{Connect, ConnectFlags, ConnectVariableHeader, LastWill};
+    use super::{Connect, ConnectFlags, ConnectVariableHeader};
 
     #[test]
     fn test() {

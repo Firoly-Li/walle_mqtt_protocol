@@ -99,7 +99,7 @@ impl TryFrom<u8> for QoS {
 /////////////////////////////////////////////////////////////////////////
 /// topic,客户端与服务端做信息交互的时候给消息做的标签
 /////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialOrd, Eq, PartialEq)]
 pub struct Topic {
     name: String,
     qos: QoS,

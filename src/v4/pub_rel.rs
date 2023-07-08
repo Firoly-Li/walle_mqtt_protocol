@@ -37,7 +37,7 @@ impl PubRel {
 //////////////////////////////////////////////////////
 impl Encoder for PubRel {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
-        let fixed_header = FixedHeaderBuilder::new().pub_rec().build();
+        let fixed_header = FixedHeaderBuilder::new().pub_rel().build();
         match fixed_header {
             Ok(fixed_header) => {
                 if let Ok(_resp) = fixed_header.encode(buffer) {

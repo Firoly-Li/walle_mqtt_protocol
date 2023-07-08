@@ -2,7 +2,7 @@ use super::{
     conn_ack::{ConnAck, ConnAckType},
     connect::{Connect, ConnectFlags, ConnectVariableHeader, LastWill, Login},
     dis_connect::DisConnect,
-    fixed_header::{self, FixedHeaderBuilder},
+    fixed_header::FixedHeaderBuilder,
     publish::{Publish, PublishVariableHeader},
     sub_ack::SubAck,
     subscribe::Subscribe,
@@ -289,11 +289,13 @@ impl ConnAckBuilder {
 /// Publish Builder
 ///////////////////////////////////
 pub struct PublishBuilder {
+    // topic
     topic: String,
+    // publish报文的message_id,当QoS为0的时候不设置QoS
     message_id: Option<usize>,
-    qos: Option<QoS>,
-    retain: Option<bool>,
-    dup: Option<bool>,
+    qos: QoS,
+    retain: bool,
+    dup: bool,
     payload: Bytes,
 }
 
@@ -302,9 +304,9 @@ impl PublishBuilder {
         Self {
             topic: String::new(),
             message_id: None,
-            qos: None,
-            retain: None,
-            dup: None,
+            qos: QoS::AtMostOnce,
+            retain: false,
+            dup: false,
             payload: Bytes::new(),
         }
     }
@@ -320,17 +322,17 @@ impl PublishBuilder {
     }
     /// 设置qos
     pub fn qos(mut self, qos: QoS) -> Self {
-        self.qos = Some(qos);
+        self.qos = qos;
         self
     }
     /// 设置retain
     pub fn retain(mut self, retain: bool) -> Self {
-        self.retain = Some(retain);
+        self.retain = retain;
         self
     }
     /// 设置dup
     pub fn dup(mut self, dup: bool) -> Self {
-        self.dup = Some(dup);
+        self.dup = dup;
         self
     }
     /// 以String的方式设置payload
@@ -353,21 +355,18 @@ impl PublishBuilder {
         //1、构建fixed_header
         let fixed_header = FixedHeaderBuilder::new()
             .publish()
-            .dup(self.dup)
-            .retain(self.retain)
-            .qos(self.qos)
+            .dup(Some(self.dup))
+            .retain(Some(self.retain))
+            .qos(Some(self.qos))
             .build();
         //2、构建variable_header
         // let variable_header = PublishVariableHeader::new(self.topic, self.message_id);
-        let variable_header = match self.qos {
-            Some(qos) => {
-                if qos == QoS::AtMostOnce {
-                    PublishVariableHeader::new(self.topic, None, Some(QoS::AtMostOnce))
-                } else {
-                    PublishVariableHeader::new(self.topic, self.message_id, Some(qos))
-                }
+        let variable_header = {
+            if self.qos == QoS::AtMostOnce {
+                PublishVariableHeader::new(self.topic, None, Some(QoS::AtMostOnce))
+            } else {
+                PublishVariableHeader::new(self.topic, self.message_id, Some(self.qos))
             }
-            None => PublishVariableHeader::new(self.topic, None, None),
         };
 
         //3、计算剩余长度
