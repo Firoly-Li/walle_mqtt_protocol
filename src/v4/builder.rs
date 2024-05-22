@@ -78,10 +78,10 @@ impl MqttMessageBuilder {
 
 ```rust
 use bytes::Bytes;
-use core_mqtt_protocol::error::ProtoError;
-use core_mqtt_protocol::{MqttVersion, QoS};
-use core_mqtt_protocol::v4::builder::MqttMessageBuilder;
-use core_mqtt_protocol::v4::connect::Connect;
+use walle_mqtt_protocol::error::ProtoError;
+use walle_mqtt_protocol::{MqttVersion, QoS};
+use walle_mqtt_protocol::v4::builder::MqttMessageBuilder;
+use walle_mqtt_protocol::v4::connect::Connect;
 let connect: Result<Connect, ProtoError> = MqttMessageBuilder::connect()
              .client_id("client_01")
              .keep_alive(10)

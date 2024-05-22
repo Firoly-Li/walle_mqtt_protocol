@@ -10,8 +10,8 @@ use bytes::{Buf, BufMut, Bytes, BytesMut};
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | byte1 | 1   | 1   | 0   | 0   | 0   | 0   | 1   | 0   |
 /// | byte2 | 0   | 0   | 0   | 0   | 0   | 0   | 1   | 0   |
-/// | byte3 | 报   | 文   | 标  | 识   | 符  | M  | S   | B  |
-/// | byte4 | 报   | 文   | 标  | 识   | 符  | L  | S   | B  |
+/// | byte3 | 报  | 文   | 标  | 识  | 符   | M   | S   | B   |
+/// | byte4 | 报  | 文   | 标  | 识  | 符   | L   | S   | B   |
 
 #[derive(Debug, Clone)]
 pub struct PubRel {
