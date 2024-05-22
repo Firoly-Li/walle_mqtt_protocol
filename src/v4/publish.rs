@@ -1,5 +1,5 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
-use tracing::{debug, info};
+use tracing::debug;
 
 use crate::error::ProtoError;
 use crate::QoS;
@@ -268,8 +268,7 @@ impl Encoder for PublishVariableHeader {
 
 #[cfg(test)]
 mod tests {
-    use bytes::{Bytes, BytesMut};
-    use tracing::info;
+    use bytes::BytesMut;
 
     use crate::v4::{builder::MqttMessageBuilder, publish::Publish, Decoder, Encoder};
 
@@ -289,7 +288,7 @@ mod tests {
 
             // encode
             let mut buffer = BytesMut::new();
-            publish.encode(&mut buffer);
+            let _ = publish.encode(&mut buffer);
             println!("buffer = {:?}", buffer);
             //decode
             if let Ok(new_publish) = Publish::decode(buffer.freeze()) {
@@ -314,14 +313,14 @@ mod tests {
             .payload_str("hello world !")
             .build()
         {
-            let remaining_len = publish.fixed_header.remaining_length();
+            let _remaining_len = publish.fixed_header.remaining_length();
             let qos = publish.fixed_header.qos().unwrap();
             let topic = publish.variable_header.topic();
             let payload = publish.payload();
 
             // encode
             let mut buffer = BytesMut::new();
-            publish.encode(&mut buffer);
+            let _ = publish.encode(&mut buffer);
             println!("buffer = {:?}", buffer);
 
             let publish1 = MqttMessageBuilder::publish()
@@ -334,7 +333,7 @@ mod tests {
                 .build()
                 .unwrap();
             let mut buffer1 = BytesMut::new();
-            publish1.encode(&mut buffer1);
+            let _ = publish1.encode(&mut buffer1);
             assert_eq!(buffer, buffer1);
         }
     }

@@ -1,4 +1,4 @@
-use super::{decoder, fixed_header, Decoder, Encoder};
+use super::{decoder, Decoder, Encoder};
 use crate::error::ProtoError;
 use crate::v4::fixed_header::FixedHeader;
 use bytes::{Bytes, BytesMut};

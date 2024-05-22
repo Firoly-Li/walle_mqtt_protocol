@@ -68,7 +68,7 @@ impl Encoder for Subscribe {
                 if let Ok(v_len) = self.variable_header.encode(buffer) {
                     let resp = len + v_len;
                     for temp in &self.topices {
-                        temp.encode(buffer);
+                        let _ = temp.encode(buffer);
                     }
                     let topic_len = self.topics_len();
                     return Ok(resp + topic_len);
@@ -141,8 +141,7 @@ mod tests {
         let sub = build_sub();
         println!("原始sub = {:?}", sub);
         let mut bytes = BytesMut::new();
-        sub.encode(&mut bytes);
-
+        let _ = sub.encode(&mut bytes);
         let resp = Subscribe::decode(bytes.into());
         match resp {
             Ok(sub) => println!("新的sub = {:?}", sub),

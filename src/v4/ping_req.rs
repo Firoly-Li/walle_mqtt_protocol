@@ -83,7 +83,7 @@ mod tests {
     fn test() {
         let mut buffer = BytesMut::new();
         let ping_req = PingReq::new();
-        ping_req.encode(&mut buffer);
+        let _ = ping_req.encode(&mut buffer);
         // let buf = buffer.freeze();
         println!("buffer = {:#?}", &buffer[..]);
     }

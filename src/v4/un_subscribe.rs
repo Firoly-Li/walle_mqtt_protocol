@@ -124,7 +124,7 @@ mod tests {
         let sub = build_sub();
         println!("原始sub = {:?}", sub);
         let mut bytes = BytesMut::new();
-        sub.encode(&mut bytes);
+        let _ = sub.encode(&mut bytes);
         println!("buffer = {:?}", bytes);
         let resp = UnSubscribe::decode(bytes.into());
         match resp {

@@ -1,10 +1,9 @@
 use super::{
-    fixed_header::{FixedHeader, FixedHeaderBuilder},
+    fixed_header::FixedHeader,
     Decoder, Encoder,
 };
-use crate::v4::builder::MqttMessageBuilder;
 use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
-use crate::{error::ProtoError, MessageType};
+use crate::error::ProtoError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 #[derive(Debug)]

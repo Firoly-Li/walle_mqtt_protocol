@@ -645,7 +645,7 @@ impl UnsubAckBuilder {
         self
     }
 
-    pub fn build(mut self) -> Result<UnSubAck, ProtoError> {
+    pub fn build(self) -> Result<UnSubAck, ProtoError> {
         let resp = FixedHeaderBuilder::new().un_suback().build();
         match resp {
             Ok(mut fixed_header) => {

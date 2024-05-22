@@ -3,7 +3,7 @@
 ```rust
    use bytes::Bytes;
    use core_mqtt_protocol::{MqttVersion, QoS};
-   use core_mqtt_protocol::v4::builder::MqttMessageBuilder;
+   use carcore_mqtt_protocol::v4::builder::MqttMessageBuilder;
    let connect = MqttMessageBuilder::connect()
            .client_id("client_01")
            .keep_alive(10)

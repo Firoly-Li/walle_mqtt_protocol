@@ -6,7 +6,7 @@ use crate::{error::ProtoError, MessageType, QoS};
 
 use crate::error::BuildError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
-use tracing::{debug, info};
+use tracing::debug;
 
 /**
  固定报头
@@ -88,7 +88,7 @@ impl FixedHeader {
         self.qos = Some(qos)
     }
     // 根据mqtt报文首字节校验fixed_header是否正确,check方法执行之后byte的首字节去掉了
-    pub fn check(mut byte1: &mut Bytes) -> Result<MessageType, BuildError> {
+    pub fn check(byte1: &mut Bytes) -> Result<MessageType, BuildError> {
         let b = byte1.get_u8();
         FixedHeader::check_with_u8(b)
     }

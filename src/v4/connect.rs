@@ -1,4 +1,5 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
+use tracing::debug;
 
 use crate::{error::ProtoError, MqttVersion, QoS, PROTOCOL_NAME};
 
@@ -11,6 +12,7 @@ use super::{
 /// Connect报文
 //////////////////////////////////////////////////////
 #[derive(Debug, Clone, PartialEq)]
+#[warn(unused_assignments)]
 pub struct Connect {
     // 固定报头
     pub fixed_header: FixedHeader,
@@ -65,7 +67,7 @@ impl Connect {
 //////////////////////////////////////////////////////
 impl Encoder for Connect {
     fn encode(&self, buffer: &mut bytes::BytesMut) -> Result<usize, ProtoError> {
-        let count = self.fixed_header.encode(buffer).unwrap();
+        let _count = self.fixed_header.encode(buffer).unwrap();
         // variable_header
         write_mqtt_string(buffer, PROTOCOL_NAME);
 
@@ -152,7 +154,7 @@ impl Decoder for Connect {
                     Err(e) => Err(e),
                 }
             }
-            Err(e) => Err(ProtoError::NotKnow),
+            Err(_e) => Err(ProtoError::NotKnow),
         }
     }
 }
@@ -233,7 +235,7 @@ impl VariableDecoder for ConnectVariableHeader {
                     }
                 }
             }
-            Err(e) => Err(ProtoError::NotKnow),
+            Err(_e) => Err(ProtoError::NotKnow),
         }
     }
 }
@@ -452,11 +454,6 @@ mod tests {
 
     use super::{Connect, ConnectFlags, ConnectVariableHeader};
 
-    #[test]
-    fn test() {
-        let fixed_header = FixedHeaderBuilder::new().connect().build();
-    }
-
     fn build_fixed_header() -> Option<FixedHeader> {
         let fixed_header = FixedHeaderBuilder::new()
             .connect()
@@ -518,7 +515,7 @@ mod tests {
                 let connect2 = Connect::decode(bytes1.into()).unwrap();
                 println!("connect2 = {:?}", connect2);
             }
-            Err(err) => println!("编解码出错"),
+            Err(_err) => println!("编解码出错"),
         }
     }
 }

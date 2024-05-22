@@ -116,10 +116,8 @@ impl Decoder for SubAck {
 mod tests {
     use bytes::BytesMut;
 
-    use crate::{
-        v4::{builder::MqttMessageBuilder, Decoder, Encoder},
-        QoS,
-    };
+    use crate::v4::{builder::MqttMessageBuilder, Decoder, Encoder}
+    ;
 
     use super::SubAck;
 
@@ -132,8 +130,7 @@ mod tests {
             .unwrap();
         println!("原始的sub = {:?}", resp);
         let mut bytes = BytesMut::new();
-        resp.encode(&mut bytes);
-
+        let _ = resp.encode(&mut bytes);
         let resp = SubAck::decode(bytes.into());
         match resp {
             Ok(sub) => println!("新的sub = {:?}", sub),
