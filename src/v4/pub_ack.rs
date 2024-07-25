@@ -1,5 +1,4 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
-
 use super::{
     fixed_header::{FixedHeader, FixedHeaderBuilder},
     Decoder, Encoder,

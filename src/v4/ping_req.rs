@@ -1,9 +1,7 @@
 use bytes::Bytes;
 use bytes::BytesMut;
-
 use super::decoder::read_fixed_header;
 use super::Decoder;
-
 use super::fixed_header::FixedHeader;
 use super::fixed_header::FixedHeaderBuilder;
 use super::Encoder;
@@ -73,7 +71,7 @@ impl Decoder for PingReq {
 
 #[cfg(test)]
 mod tests {
-    use bytes::{Buf, BytesMut};
+    use bytes::{BytesMut};
 
     use crate::v4::Encoder;
 

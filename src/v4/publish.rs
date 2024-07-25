@@ -1,9 +1,7 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 use tracing::debug;
-
 use crate::error::ProtoError;
 use crate::QoS;
-
 use super::{
     decoder::{self, read_mqtt_string, read_u16},
     fixed_header::FixedHeader,

@@ -1,7 +1,5 @@
 use bytes::{Buf, Bytes, BytesMut};
-
 use crate::{error::ProtoError, v4::VariableDecoder};
-
 use super::{
     decoder::{self, write_mqtt_string},
     fixed_header::FixedHeader,

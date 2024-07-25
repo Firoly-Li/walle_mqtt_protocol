@@ -1,7 +1,5 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
-
 use crate::{error::ProtoError, QoS};
-
 use super::{
     decoder::{self},
     fixed_header::FixedHeader,

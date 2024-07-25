@@ -3,7 +3,6 @@ use super::{
     Encoder,
 };
 use crate::{error::ProtoError, MessageType, QoS};
-
 use crate::error::BuildError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 use tracing::debug;

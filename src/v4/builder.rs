@@ -520,7 +520,7 @@ impl SubscribeBuilder {
         self
     }
 
-    pub fn build(mut self) -> Result<Subscribe, ProtoError> {
+    pub fn build(self) -> Result<Subscribe, ProtoError> {
         if let (Ok(fixed_header), variable_header) = (
             FixedHeaderBuilder::new().subscribe().build(),
             GeneralVariableHeader::new(self.message_id),
