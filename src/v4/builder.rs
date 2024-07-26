@@ -548,10 +548,7 @@ impl SubAckBuilder {
             acks: Vec::new(),
         }
     }
-    // pub fn qos(mut self, qos: QoS) -> Self {
-    //     self.qos = qos;
-    //     self
-    // }
+    
     pub fn message_id(mut self, message_id: usize) -> Self {
         self.message_id = message_id;
         self

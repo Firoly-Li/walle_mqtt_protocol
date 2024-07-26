@@ -205,13 +205,6 @@ impl VariableDecoder for PublishVariableHeader {
     type Item = PublishVariableHeader;
 
     fn decode(bytes: &mut Bytes, qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
-        // let topic_resp = read_mqtt_string(bytes);
-        // let message_id_resp = read_u16(bytes);
-        // if let (Ok(topic), Ok(message_id)) = (topic_resp, message_id_resp) {
-        //     return Ok(PublishVariableHeader::new(topic, Some(message_id.into())));
-        // }
-        // Err(ProtoError::NotKnow)
-
         let topic_resp = read_mqtt_string(bytes);
         match topic_resp {
             Ok(topic) => match qos {

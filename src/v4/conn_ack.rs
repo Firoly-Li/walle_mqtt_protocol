@@ -122,41 +122,32 @@ impl ConnAckVariableHeader {
 /////////////////////////////////////////////////////////
 impl Encoder for ConnAckVariableHeader {
     fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError> {
+        buffer.put_u8(0b0000_0000);
         match &self.conn_ack_type {
             ConnAckType::Success => {
-                buffer.put_u8(0b0000_0000);
                 buffer.put_u8(0b0000_0000);
                 Ok(2)
             }
             ConnAckType::ProtoVersionError => {
-                buffer.put_u8(0b0000_0000);
                 buffer.put_u8(0b0000_0001);
                 Ok(2)
             }
             ConnAckType::IdentifierRejected => {
-                buffer.put_u8(0b0000_0000);
                 buffer.put_u8(0b0000_0010);
                 Ok(2)
             }
             ConnAckType::ServiceUnavailable => {
-                buffer.put_u8(0b0000_0000);
                 buffer.put_u8(0b0000_0011);
                 Ok(2)
             }
             ConnAckType::BadUsernameOrPassword => {
-                buffer.put_u8(0b0000_0000);
                 buffer.put_u8(0b0000_0100);
                 Ok(2)
             }
             ConnAckType::NotAuthentication => {
-                buffer.put_u8(0b0000_0000);
                 buffer.put_u8(0b0000_0101);
                 Ok(2)
-            } // ConnAckType::Failed => {
-              //     buffer.put_u8(0b0000_0000);
-              //     buffer.put_u8(0b0000_0110);
-              //     Ok(2)
-              // }
+            }
         }
     }
 }
@@ -167,7 +158,7 @@ impl Encoder for ConnAckVariableHeader {
 impl VariableDecoder for ConnAckVariableHeader {
     type Item = ConnAckVariableHeader;
 
-    fn decode(bytes: &mut Bytes, qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
+    fn decode(bytes: &mut Bytes, _qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
         let b1 = bytes.get_u8();
         if b1 == 0 {
             let b2 = bytes.get_u8();

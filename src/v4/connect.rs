@@ -205,7 +205,7 @@ impl ConnectVariableHeader {
 impl VariableDecoder for ConnectVariableHeader {
     type Item = ConnectVariableHeader;
     // 构建variable_header
-    fn decode(stream: &mut Bytes, qos: Option<QoS>) -> Result<ConnectVariableHeader, ProtoError> {
+    fn decode(stream: &mut Bytes, _qos: Option<QoS>) -> Result<ConnectVariableHeader, ProtoError> {
         let resp = read_mqtt_string(stream);
         match resp {
             Ok(protocol_name) => {

@@ -8,7 +8,6 @@ use tracing::warn;
 pub fn read_fixed_header(stream: &mut Bytes) -> Result<FixedHeader, ProtoError> {
     // 由于fixed_header的长度在2-5个字节之间，所以stream_len的长度必须要大与等于2
     let stream_len = stream.len();
-    // println!("stream_len: {}", stream_len);
     if stream_len < 2 && stream_len > 5 {
         return Err(ProtoError::FixedHeaderLengthError(stream_len));
     }
@@ -19,10 +18,8 @@ pub fn read_fixed_header(stream: &mut Bytes) -> Result<FixedHeader, ProtoError> 
     let resp = check_fixed_header_type(byte1);
     match resp {
         Ok(message_type) => {
-            // println!("message_type = {:?}", message_type);
             // 优先得到fixed_header（此时的fixed_header还没有计算剩余长度）
             let resp = check_fixed_header_options(byte1, message_type);
-            // println!("response = {:?}", resp);
             match resp {
                 Ok(fixed_header) => check_remain_length(iter, fixed_header),
                 Err(err) => Err(err),
@@ -43,13 +40,11 @@ pub fn parse_fixed_header(mut stream: Iter<u8>) -> Result<FixedHeader, ProtoErro
     let resp = check_fixed_header_type(byte1);
     match resp {
         Ok(message_type) => {
-            // println!("message_type = {:?}", message_type);
             // 优先得到fixed_header（此时的fixed_header还没有计算剩余长度）
             let resp = check_fixed_header_options(byte1, message_type);
             // println!("response = {:?}", resp);
             match resp {
                 Ok(fixed_header) => {
-                    // println!("fixed_header = {:?}", fixed_header);
                     // 计算fixed_header的remaing_length)(剩余长度)
                     check_remain_length(stream, fixed_header)
                 }
@@ -62,7 +57,6 @@ pub fn parse_fixed_header(mut stream: Iter<u8>) -> Result<FixedHeader, ProtoErro
 
 /// 根据首字节校验fixed_header的类型
 pub fn check_fixed_header_type(byte1: &u8) -> Result<MessageType, ProtoError> {
-    // println!("check_fixed_header_type ----- byte1: {:08b}", byte1);
     match byte1 >> 4 {
         1 => Ok(MessageType::CONNECT),
         2 => Ok(MessageType::CONNACK),
@@ -92,9 +86,7 @@ pub fn check_fixed_header_options(
     // 根据message_type创建制定的fixed_header_budiler
     let fixed_header_builder = FixedHeaderBuilder::from_message_type(message_type.clone());
     // 获取低4位数
-    // println!("check_fixed_header_options -- byte1 = {}", byte1);
     let low_4 = byte1 & 0b0000_1111;
-    // println!("check_fixed_header_options -- low_4 = {}", low_4);
     match message_type {
         MessageType::PUBLISH => {
             //处理b3位数据，这里决定了dup标识
@@ -103,7 +95,6 @@ pub fn check_fixed_header_options(
                 1 => dup = Some(true),
                 x => return Err(ProtoError::DupValueError(x)),
             }
-
             //处理b2和b1位数据，这两位一般一起确定了QoS,和0b0000_0110进行与操作之后还要向右移1位
             match (low_4 & 0b0000_0110) >> 1 {
                 0 => qos = Some(QoS::AtMostOnce),
@@ -133,7 +124,7 @@ pub fn check_fixed_header_options(
             //处理b2和b1位数据，这两位一般一起确定了QoS
             match (low_4 & 0b0000_0110) >> 1 {
                 1 => qos = None,
-                x => return Err(ProtoError::NotKnow),
+                _ => return Err(ProtoError::NotKnow),
             };
             //处理b0位数据，这里决定了retain标志
             match low_4 & 0b0000_0001 {

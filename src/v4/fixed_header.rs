@@ -279,7 +279,7 @@ fn subscribe_fixed_header_encode(
 ) -> Result<usize, ProtoError> {
     let mut resp: usize = 0;
     // 写入byte1
-    let mut byte1: u8 = 0b1000_0010;
+    let byte1: u8 = 0b1000_0010;
     buffer.put_u8(byte1);
     resp += 1;
     // 写入剩余长度

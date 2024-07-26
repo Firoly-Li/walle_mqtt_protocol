@@ -130,7 +130,7 @@ impl Encoder for GeneralVariableHeader {
 impl VariableDecoder for GeneralVariableHeader {
     type Item = GeneralVariableHeader;
 
-    fn decode(bytes: &mut Bytes, qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
+    fn decode(bytes: &mut Bytes, _qos: Option<QoS>) -> Result<Self::Item, ProtoError> {
         let message_id = bytes.get_u16() as usize;
         Ok(GeneralVariableHeader { message_id })
     }

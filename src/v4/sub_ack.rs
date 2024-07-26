@@ -69,7 +69,6 @@ impl Encoder for SubAck {
                 let resp = self.variable_header.encode(buffer);
                 match resp {
                     Ok(variable_header_len) => {
-                        //todo acks还未进行encode
                         let acks = self.acks.iter();
                         for ack in acks {
                             buffer.put_u8(ack.clone());
