@@ -6,7 +6,7 @@ use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
 use crate::error::ProtoError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct UnSubAck {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,

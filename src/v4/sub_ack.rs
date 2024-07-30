@@ -28,7 +28,7 @@ use super::{
 /// | byte4 | 报  | 文  | 标   | 识  | 符   | L   | S   | B   |
 /// | byte5 | x   | 0   | 0   | 0   | 0   |  0   | x   | x   |
 ///
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct SubAck {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,

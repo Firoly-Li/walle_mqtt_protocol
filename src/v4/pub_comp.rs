@@ -15,7 +15,7 @@ use bytes::{Buf, BufMut, Bytes, BytesMut};
 /// | byte3 | 报  | 文   | 标  | 识   | 符  | M   | S   | B  |
 /// | byte4 | 报  | 文   | 标  | 识   | 符  | L   | S   | B  |
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct PubComp {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,

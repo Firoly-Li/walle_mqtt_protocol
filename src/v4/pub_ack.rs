@@ -17,7 +17,7 @@ use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
 /// | byte3 | 报   | 文   | 标  | 识   | 符  | M   | S   | B   |
 /// | byte4 | 报   | 文   | 标  | 识   | 符  | L   | S   | B   |
 ///
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct PubAck {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,
