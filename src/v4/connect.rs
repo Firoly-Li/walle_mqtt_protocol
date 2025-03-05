@@ -1,4 +1,5 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
+use serde::{Deserialize, Serialize};
 use crate::{error::ProtoError, MqttVersion, QoS, PROTOCOL_NAME};
 use super::{
     decoder::{self, *},
@@ -377,7 +378,26 @@ impl Login {
 }
 
 /// 客户端遗嘱信息
-#[derive(Debug, Clone, PartialEq)]
+// 要确保`bytes`和自定义的`QoS`类型支持序列化和反序列化，需要检查它们是否实现了`Serialize`和`Deserialize`特征
+// 对于`bytes::Bytes`，通常需要启用`bytes` crate的`serde`特性
+// 对于自定义的`QoS`类型，需要为其添加`#[derive(Serialize, Deserialize)]`
+// 假设`QoS`定义在`crate`中，并且`bytes` crate已经启用了`serde`特性
+
+// 假设`QoS`类型定义如下，需要为其添加`Serialize`和`Deserialize`派生
+
+// 由于QoS已经在其他地方定义过，这里移除重复定义
+// 如果需要修改定义，应该修改原定义处的代码
+// 这里假设已经有一个全局的QoS定义，所以移除当前的重复定义
+// 如果确实需要在本地定义，建议修改名称以避免冲突
+// 例如：
+// pub enum LocalQoS {
+//     AtMostOnce,
+//     AtLeastOnce,
+//     ExactlyOnce,
+// }
+
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LastWill {
     // 主题
     pub topic_name: String,

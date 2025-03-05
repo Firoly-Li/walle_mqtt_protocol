@@ -22,6 +22,7 @@
 
 use bytes::{BufMut, Bytes, BytesMut};
 use error::ProtoError;
+use serde::{Deserialize, Serialize};
 use v4::{decoder, Encoder};
 pub mod error;
 pub mod v4;
@@ -64,7 +65,7 @@ pub enum MessageType {
 /// - ExactlyOnce：使用2表示
 /////////////////////////////////////////////////////////////////////////
 #[repr(u8)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Serialize, Deserialize)]
 #[allow(clippy::enum_variant_names)]
 pub enum QoS {
     // 最多
