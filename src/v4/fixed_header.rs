@@ -1,9 +1,9 @@
 use super::{
-    publish::{FOUR_BYTE_MAX_LEN, ONE_BYTE_MAX_LEN, THREE_BYTE_MAX_LEN, TWO_BYTE_MAX_LEN},
     Encoder,
+    publish::{FOUR_BYTE_MAX_LEN, ONE_BYTE_MAX_LEN, THREE_BYTE_MAX_LEN, TWO_BYTE_MAX_LEN},
 };
-use crate::{error::ProtoError, MessageType, QoS};
 use crate::error::BuildError;
+use crate::{MessageType, QoS, error::ProtoError};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 use tracing::debug;
 

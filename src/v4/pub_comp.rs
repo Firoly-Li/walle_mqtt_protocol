@@ -1,9 +1,7 @@
-use super::{
-    fixed_header::{FixedHeader, FixedHeaderBuilder},
-    Decoder, Encoder,
-};
+use super::fixed_header::{FixedHeader, FixedHeaderBuilder};
+use crate::common::coder::{Decoder, Encoder};
 use crate::error::ProtoError;
-use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
+use crate::v4::{GeneralVariableHeader, VariableDecoder, decoder};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 ///
@@ -15,7 +13,7 @@ use bytes::{Buf, BufMut, Bytes, BytesMut};
 /// | byte3 | 报  | 文   | 标  | 识   | 符  | M   | S   | B  |
 /// | byte4 | 报  | 文   | 标  | 识   | 符  | L   | S   | B  |
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct PubComp {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,

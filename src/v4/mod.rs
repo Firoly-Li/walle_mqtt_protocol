@@ -30,7 +30,7 @@ use self::sub_ack::SubAck;
 use self::subscribe::Subscribe;
 use self::un_suback::UnSubAck;
 use self::un_subscribe::UnSubscribe;
-use crate::error::ProtoError;
+use crate::{common::coder::Encoder, error::ProtoError};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 use crate::QoS;
@@ -66,21 +66,6 @@ pub enum Packet {
     UnSubAck(UnSubAck),
     // 断开链接报文
     DisConnect(DisConnect),
-}
-
-/// 编码
-pub trait Encoder: Sync + Send + 'static {
-    fn encode(&self, buffer: &mut BytesMut) -> Result<usize, ProtoError>;
-}
-
-/// 解码
-pub trait Decoder: Sync + Send + 'static {
-    // 定义的返回类型
-    type Item;
-    // 错误类型
-    type Error;
-    // 将bytes解析为对应的报文
-    fn decode(bytes: Bytes) -> Result<Self::Item, Self::Error>;
 }
 
 /// 可变报头的解码器

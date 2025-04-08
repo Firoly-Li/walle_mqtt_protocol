@@ -1,12 +1,12 @@
-use bytes::Bytes;
-use bytes::BytesMut;
+use super::Encoder;
 use super::decoder::read_fixed_header;
-use super::Decoder;
 use super::fixed_header::FixedHeader;
 use super::fixed_header::FixedHeaderBuilder;
-use super::Encoder;
-use crate::error::ProtoError;
 use crate::MessageType;
+use crate::common::coder::Decoder;
+use crate::error::ProtoError;
+use bytes::Bytes;
+use bytes::BytesMut;
 /////////////////////////////////////////////////////////////
 /// 心跳报文
 ///
@@ -71,7 +71,7 @@ impl Decoder for PingReq {
 
 #[cfg(test)]
 mod tests {
-    use bytes::{BytesMut};
+    use bytes::BytesMut;
 
     use crate::v4::Encoder;
 

@@ -1,12 +1,10 @@
-use super::{
-    fixed_header::FixedHeader,
-    Decoder, Encoder,
-};
-use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
+use super::fixed_header::FixedHeader;
+use crate::common::coder::{Decoder, Encoder};
 use crate::error::ProtoError;
+use crate::v4::{GeneralVariableHeader, VariableDecoder, decoder};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct UnSubAck {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,

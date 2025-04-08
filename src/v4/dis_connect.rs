@@ -1,7 +1,11 @@
-use super::{decoder, Decoder, Encoder};
-use crate::error::ProtoError;
 use crate::v4::fixed_header::FixedHeader;
+use crate::{
+    common::coder::{Decoder, Encoder},
+    error::ProtoError,
+};
 use bytes::{Bytes, BytesMut};
+
+use super::decoder;
 
 /// 断开连接报文
 ///

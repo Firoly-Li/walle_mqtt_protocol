@@ -1,9 +1,7 @@
-use super::{
-    fixed_header::{FixedHeader, FixedHeaderBuilder},
-    Decoder, Encoder,
-};
+use super::fixed_header::{FixedHeader, FixedHeaderBuilder};
+use crate::common::coder::{Decoder, Encoder};
 use crate::error::ProtoError;
-use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
+use crate::v4::{GeneralVariableHeader, VariableDecoder, decoder};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |

@@ -1,11 +1,7 @@
+use super::{VariableDecoder, decoder, fixed_header::FixedHeader};
+use crate::{MqttVersion, PROTOCOL_NAME, QoS, common::coder::*, error::ProtoError};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 use serde::{Deserialize, Serialize};
-use crate::{error::ProtoError, MqttVersion, QoS, PROTOCOL_NAME};
-use super::{
-    decoder::{self, *},
-    fixed_header::FixedHeader,
-    Decoder, Encoder, VariableDecoder,
-};
 //////////////////////////////////////////////////////
 /// Connect报文
 //////////////////////////////////////////////////////
@@ -396,7 +392,6 @@ impl Login {
 //     ExactlyOnce,
 // }
 
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LastWill {
     // 主题
@@ -461,12 +456,12 @@ mod tests {
     use bytes::{Bytes, BytesMut};
 
     use crate::{
+        PROTOCOL_NAME,
+        common::coder::{Decoder, Encoder},
         v4::{
             builder::MqttMessageBuilder,
             fixed_header::{FixedHeader, FixedHeaderBuilder},
-            Decoder, Encoder,
         },
-        PROTOCOL_NAME,
     };
 
     use super::{Connect, ConnectFlags, ConnectVariableHeader};

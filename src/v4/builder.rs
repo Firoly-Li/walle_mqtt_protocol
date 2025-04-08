@@ -1,4 +1,5 @@
 use super::{
+    GeneralVariableHeader,
     conn_ack::{ConnAck, ConnAckType},
     connect::{Connect, ConnectFlags, ConnectVariableHeader, LastWill, Login},
     dis_connect::DisConnect,
@@ -7,14 +8,13 @@ use super::{
     sub_ack::SubAck,
     subscribe::Subscribe,
     un_subscribe::UnSubscribe,
-    GeneralVariableHeader,
 };
-use crate::v4::pub_ack::PubAck;
 use crate::v4::pub_comp::PubComp;
 use crate::v4::pub_rec::PubRec;
 use crate::v4::pub_rel::PubRel;
 use crate::v4::un_suback::UnSubAck;
-use crate::{error::ProtoError, MqttVersion, QoS, Topic, PROTOCOL_NAME};
+use crate::{MqttVersion, PROTOCOL_NAME, QoS, error::ProtoError};
+use crate::{common::topic::Topic, v4::pub_ack::PubAck};
 use bytes::Bytes;
 
 /**
@@ -548,7 +548,7 @@ impl SubAckBuilder {
             acks: Vec::new(),
         }
     }
-    
+
     pub fn message_id(mut self, message_id: usize) -> Self {
         self.message_id = message_id;
         self

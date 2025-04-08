@@ -1,13 +1,9 @@
+use super::{VariableDecoder, decoder, fixed_header::FixedHeader};
+use crate::QoS;
+use crate::common::coder::{Decoder, Encoder, *};
+use crate::error::ProtoError;
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 use tracing::debug;
-use crate::error::ProtoError;
-use crate::QoS;
-use super::{
-    decoder::{self, read_mqtt_string, read_u16},
-    fixed_header::FixedHeader,
-    Decoder, Encoder, VariableDecoder,
-};
-
 /// 一个字节表示的最大长度
 pub const ONE_BYTE_MAX_LEN: usize = 127;
 /// 两个字节表示的最大长度
@@ -261,7 +257,8 @@ impl Encoder for PublishVariableHeader {
 mod tests {
     use bytes::BytesMut;
 
-    use crate::v4::{builder::MqttMessageBuilder, publish::Publish, Decoder, Encoder};
+    use crate::common::coder::{Decoder, Encoder};
+    use crate::v4::{builder::MqttMessageBuilder, publish::Publish};
 
     #[test]
     fn publish_to_bytes() {

@@ -26,6 +26,31 @@ pub enum ProtoError {
     EncodeVariableHeaderError,
     #[error("编码remaining_length错误！")]
     EncodeRemainingLengthError,
+
+    // ▼▼▼▼▼▼▼▼▼▼▼▼▼ 新增v5相关错误 ▼▼▼▼▼▼▼▼▼▼▼▼▼
+    #[error("不支持的协议版本: {0}")]
+    UnsupportedVersion(u8),
+
+    #[error("未知属性标识: {0}")]
+    UnknownProperty(u8),
+
+    #[error("无效属性长度: {0}")]
+    InvalidPropertyLength(usize),
+
+    #[error("无效原因码: {0}")]
+    InvalidReasonCode(u8),
+
+    #[error("未知原因码: {0}")]
+    UnknownReasonCode(u8),
+
+    #[error("用户属性格式错误")]
+    MalformedUserProperty,
+
+    #[error("无效的认证方法")]
+    InvalidAuthMethod,
+
+    #[error("超过最大Property大小")]
+    OutOfMaxPropertySize,
 }
 
 /// 消息构建错误相关

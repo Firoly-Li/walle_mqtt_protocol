@@ -1,7 +1,9 @@
-use super::{
-    decoder, fixed_header::FixedHeader, Decoder, Encoder, GeneralVariableHeader, VariableDecoder,
+use super::{GeneralVariableHeader, VariableDecoder, decoder, fixed_header::FixedHeader};
+use crate::common::{
+    coder::{Decoder, Encoder},
+    topic::Topic,
 };
-use crate::{error::ProtoError, Topic};
+use crate::error::ProtoError;
 use bytes::{Buf, Bytes, BytesMut};
 
 #[derive(Debug, Clone)]
@@ -115,10 +117,11 @@ impl Decoder for Subscribe {
 mod tests {
     use bytes::BytesMut;
 
-    use crate::{
-        v4::{builder::MqttMessageBuilder, Decoder, Encoder},
-        Topic,
+    use crate::common::{
+        coder::{Decoder, Encoder},
+        topic::Topic,
     };
+    use crate::v4::builder::MqttMessageBuilder;
 
     use super::Subscribe;
 

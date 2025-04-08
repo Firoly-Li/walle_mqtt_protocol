@@ -1,10 +1,8 @@
-use bytes::{Buf, BufMut, Bytes, BytesMut};
-use super::{
-    fixed_header::{FixedHeader, FixedHeaderBuilder},
-    Decoder, Encoder,
-};
+use super::fixed_header::{FixedHeader, FixedHeaderBuilder};
+use crate::common::coder::{Decoder, Encoder};
 use crate::error::ProtoError;
-use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
+use crate::v4::{GeneralVariableHeader, VariableDecoder, decoder};
+use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 /// 发布确认报文
 /// PUBACK报文分为两部分，固定头和可变头，其中固定头的内容是固定的，
@@ -17,7 +15,7 @@ use crate::v4::{decoder, GeneralVariableHeader, VariableDecoder};
 /// | byte3 | 报   | 文   | 标  | 识   | 符  | M   | S   | B   |
 /// | byte4 | 报   | 文   | 标  | 识   | 符  | L   | S   | B   |
 ///
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct PubAck {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,

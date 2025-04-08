@@ -1,10 +1,11 @@
-use bytes::{Buf, BufMut, Bytes, BytesMut};
-use crate::{error::ProtoError, QoS};
 use super::{
+    GeneralVariableHeader, VariableDecoder,
     decoder::{self},
     fixed_header::FixedHeader,
-    Decoder, Encoder, GeneralVariableHeader, VariableDecoder,
 };
+use crate::common::coder::{Decoder, Encoder};
+use crate::{QoS, error::ProtoError};
+use bytes::{Buf, BufMut, Bytes, BytesMut};
 
 /// 订阅确认
 /// SUBACK报文，反应了broker对client的SUBSCRIBE报文的回应，由于SUBSCRIBE报文可以同事订阅多个Topic，
@@ -28,7 +29,7 @@ use super::{
 /// | byte4 | 报  | 文  | 标   | 识  | 符   | L   | S   | B   |
 /// | byte5 | x   | 0   | 0   | 0   | 0   |  0   | x   | x   |
 ///
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct SubAck {
     fixed_header: FixedHeader,
     variable_header: GeneralVariableHeader,
@@ -113,8 +114,8 @@ impl Decoder for SubAck {
 mod tests {
     use bytes::BytesMut;
 
-    use crate::v4::{builder::MqttMessageBuilder, Decoder, Encoder}
-    ;
+    use crate::common::coder::{Decoder, Encoder};
+    use crate::v4::builder::MqttMessageBuilder;
 
     use super::SubAck;
 

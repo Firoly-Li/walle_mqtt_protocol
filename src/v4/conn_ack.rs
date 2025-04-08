@@ -1,12 +1,11 @@
 use bytes::{Buf, BufMut, Bytes, BytesMut};
 
-use crate::error::ProtoError;
 use crate::QoS;
+use crate::{common::coder::Decoder, error::ProtoError};
 
 use super::{
-    decoder,
+    Encoder, VariableDecoder, decoder,
     fixed_header::{FixedHeader, FixedHeaderBuilder},
-    Decoder, Encoder, VariableDecoder,
 };
 
 /// 链接回执报文
@@ -184,7 +183,10 @@ impl VariableDecoder for ConnAckVariableHeader {
 mod tests {
     use bytes::BytesMut;
 
-    use crate::v4::{builder::MqttMessageBuilder, Decoder, Encoder};
+    use crate::{
+        common::coder::{Decoder, Encoder},
+        v4::builder::MqttMessageBuilder,
+    };
 
     use super::ConnAck;
 

@@ -1,10 +1,11 @@
-use bytes::{Buf, Bytes, BytesMut};
-use crate::{error::ProtoError, v4::VariableDecoder};
-use super::{
-    decoder::{self, write_mqtt_string},
-    fixed_header::FixedHeader,
-    Decoder, Encoder, GeneralVariableHeader,
+use super::{GeneralVariableHeader, decoder, fixed_header::FixedHeader};
+use crate::common::coder::{Decoder, Encoder};
+use crate::{
+    common::coder::{self, *},
+    error::ProtoError,
+    v4::VariableDecoder,
 };
+use bytes::{Buf, Bytes, BytesMut};
 
 /// | Bit   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -79,7 +80,7 @@ impl Decoder for UnSubscribe {
                     let mut topices = Vec::new();
                     // println!("bytes: {:?}", bytes);
                     while !bytes.is_empty() {
-                        let topic = decoder::read_mqtt_string(&mut bytes);
+                        let topic = coder::read_mqtt_string(&mut bytes);
                         match topic {
                             Ok(topic) => topices.push(topic),
                             Err(e) => return Err(e),
@@ -98,9 +99,9 @@ impl Decoder for UnSubscribe {
 mod tests {
     use bytes::BytesMut;
 
-    use crate::v4::{builder::MqttMessageBuilder, Decoder, Encoder};
-
     use super::UnSubscribe;
+    use crate::common::coder::{Decoder, Encoder};
+    use crate::v4::builder::MqttMessageBuilder;
 
     fn build_sub() -> UnSubscribe {
         let mut topices = Vec::new();
