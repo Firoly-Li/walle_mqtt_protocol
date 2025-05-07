@@ -24,7 +24,7 @@ pub struct PubAck {
 impl PubAck {
     pub fn new(message_id: usize) -> Self {
         Self {
-            fixed_header: FixedHeaderBuilder::new().pub_rel().build().unwrap(),
+            fixed_header: FixedHeaderBuilder::new().pub_ack().build().unwrap(),
             variable_header: GeneralVariableHeader::new(message_id),
         }
     }

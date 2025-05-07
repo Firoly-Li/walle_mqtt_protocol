@@ -22,7 +22,7 @@ pub struct PubRec {
 impl PubRec {
     pub fn new(message_id: usize) -> Self {
         Self {
-            fixed_header: FixedHeaderBuilder::new().pub_rel().build().unwrap(),
+            fixed_header: FixedHeaderBuilder::new().pub_rec().build().unwrap(),
             variable_header: GeneralVariableHeader::new(message_id),
         }
     }

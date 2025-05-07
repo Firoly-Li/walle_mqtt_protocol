@@ -22,7 +22,7 @@ pub struct PubComp {
 impl PubComp {
     pub fn new(message_id: usize) -> Self {
         Self {
-            fixed_header: FixedHeaderBuilder::new().pub_rel().build().unwrap(),
+            fixed_header: FixedHeaderBuilder::new().pub_comp().build().unwrap(),
             variable_header: GeneralVariableHeader::new(message_id),
         }
     }
